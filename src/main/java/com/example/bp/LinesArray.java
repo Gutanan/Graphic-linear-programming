@@ -4,26 +4,54 @@ import java.util.ArrayList;
 
 public class LinesArray {
 
-    private ArrayList<Line> lines;
+    private ArrayList<LinearLine> lines;
 
     public LinesArray(){
         lines = new ArrayList<>();
     }
 
-    public ArrayList<Line> getLines() {
+    public ArrayList<LinearLine> getLines() {
         return lines;
     }
 
-    public void addLine(Line line){
+    public void addLine(LinearLine line){
         lines.add(line);
     }
 
-    public ArrayList<Point> findPossibleSolutions() {
-        ArrayList<Point> possibleSolutions = new ArrayList<>();
+    public ArrayList<Point> findBasicSolutions() {
+        ArrayList<Point> basicSolutions = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             for (int j = i+1; j < lines.size(); j++){
                 Point intersection = countIntersection(lines.get(i), lines.get(j));
-                possibleSolutions.add(intersection);
+                if (intersection.getX() >= 0d && intersection.getY() >= 0d){
+                    basicSolutions.add(intersection);
+                }
+            }
+            if (lines.get(i).getNullX().getX() >= 0d && lines.get(i).getNullX().getY() >= 0d){
+                basicSolutions.add(lines.get(i).getNullX());
+            }
+            if (lines.get(i).getNullY().getX() >= 0d && lines.get(i).getNullY().getY() >= 0d){
+                basicSolutions.add(lines.get(i).getNullY());
+            }
+        }
+        basicSolutions.add(new Point(0d, 0d));
+        return basicSolutions;
+    }
+
+    public ArrayList<Point> findPossibleSolutions() {
+        ArrayList<Point> basicSolutions = findBasicSolutions();
+        ArrayList<Point> possibleSolutions = new ArrayList<>();
+        boolean isPossible;
+        for (int i = 0; i < basicSolutions.size(); i++) {
+            isPossible = true;
+            for (int j = 0; j < lines.size(); j++) {
+                double value = ((lines.get(j).getCoefX1()*basicSolutions.get(i).getX()) + (lines.get(j).getCoefX2()*basicSolutions.get(i).getY()));
+                if (value > lines.get(j).getRightSide()) {
+                    isPossible = false;
+                }
+            }
+            if (isPossible) {
+                possibleSolutions.add(basicSolutions.get(i));
             }
         }
         return possibleSolutions;
@@ -43,7 +71,6 @@ public class LinesArray {
                 if (currentmax > max){
                     max = currentmax;
                     index = i;
-                    System.out.println(max);
                 }
             }
             return possibleSolutions.get(index);
@@ -68,7 +95,7 @@ public class LinesArray {
      * @param b Line
      * @return Point of intersection
      */
-    private Point countIntersection(Line a, Line b){
+    private Point countIntersection(LinearLine a, LinearLine b){
         Point intersection = new Point(0d, 0d);
         double x;
         double y;

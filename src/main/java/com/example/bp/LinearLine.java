@@ -1,13 +1,13 @@
 package com.example.bp;
 
-public class Line {
+public class LinearLine {
     private Point nullX;
     private Point nullY;
     private double coefX1; //multiplier of X1
     private double coefX2; //multiplier of X2
     private double rightSide; //right side of equation of line
 
-    public Line(int coefX1, int coefX2, int rightSide) {
+    public LinearLine(double coefX1, double coefX2, double rightSide) {
         this.coefX1 = coefX1;
         this.coefX2 = coefX2;
         this.rightSide = rightSide;

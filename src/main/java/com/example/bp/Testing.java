@@ -2,13 +2,13 @@ package com.example.bp;
 
 public class Testing {
     public static void main(String[] args) {
-        Line line1 = new Line(1,1,4);
-        Line line2 = new Line(1,3,6);
+        LinearLine line1 = new LinearLine(1,1,4);
+        LinearLine line2 = new LinearLine(1,3,6);
         //Line line3 = new Line(4,3,12);
-        PurposeLine purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, -3, -5);
+        PurposeLine purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, 3, 5);
         System.out.println("Přímka 1:");
         System.out.println(line1.toString());
-        System.out.println("Přímka 1:");
+        System.out.println("Přímka 2:");
         System.out.println(line2.toString());
         //System.out.println(line3.toString());
         LinesArray lines = new LinesArray();
@@ -16,8 +16,8 @@ public class Testing {
         lines.addLine(line2);
         //lines.addLine(line3);
 
-        System.out.println("Přípustná řešení");
-        System.out.println(lines.findPossibleSolutions());
+        System.out.println("Základní řešení");
+        System.out.println(lines.findBasicSolutions());
         System.out.println("Optimální řešení");
         System.out.println(lines.findOptimalSolution(purposeLine));
 
@@ -46,9 +46,5 @@ public class Testing {
                 quit = true;
             }
         }
-
-        //testování spojení na větvi dev
-
-
     }
 }

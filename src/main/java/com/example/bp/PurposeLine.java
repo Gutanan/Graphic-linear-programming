@@ -5,7 +5,7 @@ public class PurposeLine {
     private double coefX2; //multiplier of X2
     private PURPOSE purpose;
 
-    public PurposeLine(PURPOSE purpose, int coefX1, int coefX2) {
+    public PurposeLine(PURPOSE purpose, double coefX1, double coefX2) {
         this.coefX1 = coefX1;
         this.coefX2 = coefX2;
         this.purpose = purpose;
