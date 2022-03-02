@@ -45,6 +45,7 @@ public class LinesArray {
     /**
      * Method goes through Basic Solutions points and evaluates, whether they are also Possible Solutions points
      * @return ArrayList of Possible Solutions points
+     * TODO double někdy zaokrouhlí špatně a proto se přípustné základní řešení nevykreslí
      */
     public ArrayList<Point> findPossibleSolutions() {
         ArrayList<Point> basicSolutions = findBasicSolutions();

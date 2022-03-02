@@ -15,19 +15,33 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Polygon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.bp.LinearProgrammingControler">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.bp.LinearProgrammingControler">
    <center>
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" spacing="5.0">
+            <VBox fx:id="constrains" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0" spacing="5.0">
                <children>
-                  <TextField fx:id="restrain1" promptText="Omezení" />
-                  <TextField fx:id="restrain2" promptText="Omezení" />
-                  <TextField fx:id="purposeLine" promptText="Účelová funkce" />
-                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                  <TextField fx:id="purposeLine" promptText="Účelová funkce" text="MAX = 3x+5y" />
+                  <TextField fx:id="restrain1" promptText="Omezení" text="1x+1y&lt;=4" />
+                  <TextField fx:id="restrain2" promptText="Omezení" text="1x+3y&lt;=6" />
+                  <TextField fx:id="restrain3" layoutX="15.0" layoutY="51.0" promptText="Omezení" visible="false" />
+                  <TextField fx:id="restrain4" layoutX="15.0" layoutY="228.0" promptText="Omezení" visible="false" />
+                  <TextField fx:id="restrain5" layoutX="15.0" layoutY="264.0" promptText="Omezení" visible="false" />
+                  <TextField fx:id="restrain6" layoutX="15.0" layoutY="300.0" promptText="Omezení" visible="false" />
+                  <TextField fx:id="restrain7" layoutX="15.0" layoutY="336.0" promptText="Omezení" visible="false" />
+                  <TextField fx:id="restrain8" layoutX="15.0" layoutY="372.0" promptText="Omezení" visible="false" />
+                  <TextField fx:id="restrain9" layoutX="15.0" layoutY="408.0" promptText="Omezení" visible="false" />
+                  <TextField fx:id="restrain10" layoutX="15.0" layoutY="444.0" promptText="Omezení" visible="false" />
+                  <HBox alignment="CENTER" prefHeight="25.0" prefWidth="190.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" text="Přidej omezení" />
+                        <Button mnemonicParsing="false" onAction="#addConstrain" text="Přidej omezení" />
                         <Button mnemonicParsing="false" onAction="#count" text="Vykresli" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="15.0" layoutY="411.0" prefHeight="25.0" prefWidth="190.0" spacing="5.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#removeConstrain" text="Odeber omezení" />
+                        <Button mnemonicParsing="false" onAction="#clear" text="Vymazej" />
                      </children>
                   </HBox>
                </children>
@@ -35,15 +49,23 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </VBox>
-            <AnchorPane maxHeight="500.0" maxWidth="500.0" minHeight="500.0" minWidth="500.0" prefHeight="500.0" prefWidth="500.0">
+            <AnchorPane fx:id="graph" maxHeight="500.0" maxWidth="500.0" minHeight="500.0" minWidth="500.0" prefHeight="500.0" prefWidth="500.0">
                <children>
-                  <Line fx:id="axisX2" endY="-450.0" layoutX="30.0" layoutY="470.0" />
-                  <Line fx:id="axisX1" endX="450.0" layoutX="30.0" layoutY="470.0" />
-                  <Line fx:id="line2" endX="100.0" layoutX="30.0" layoutY="470.0" startY="-300.0" />
-                  <Line fx:id="line1" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" />
-                  <Circle fx:id="optimalCircle" centerX="100.0" centerY="-200.0" fill="#ff1f1f" layoutX="30.0" layoutY="470.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" />
-                  <Line fx:id="purpLine" endX="150.0" fill="RED" layoutX="30.0" layoutY="470.0" startY="-100.0" stroke="RED" />
-                  <Polygon fx:id="possibleSolutionsPolygon" fill="LIME" layoutX="30.0" layoutY="470.0" opacity="0.3" points="100, -100, 250, -100, 177, -200" stroke="BLACK" strokeType="INSIDE" />
+                  <Line fx:id="axisX2" endY="-450.0" layoutX="30.0" layoutY="470.0" visible="true" />
+                  <Line fx:id="axisX1" endX="450.0" layoutX="30.0" layoutY="470.0" visible="true" />
+                  <Line fx:id="line1" endX="100.0" layoutX="30.0" layoutY="470.0" startY="-300.0" visible="false" />
+                  <Line fx:id="line2" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line3" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line4" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line5" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line6" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line7" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line8" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line9" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Line fx:id="line10" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
+                  <Circle fx:id="optimalCircle" centerX="100.0" centerY="-200.0" fill="#ff1f1f" layoutX="30.0" layoutY="470.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
+                  <Line fx:id="purpLine" endX="150.0" fill="RED" layoutX="30.0" layoutY="470.0" startY="-100.0" stroke="RED" visible="false" />
+                  <Polygon fx:id="possibleSolutionsPolygon" fill="LIME" layoutX="30.0" layoutY="470.0" opacity="0.3" points="100, -100, 250, -100, 177, -200" stroke="BLACK" strokeType="INSIDE" visible="false" />
                </children>
             </AnchorPane>
          </children>

@@ -49,5 +49,33 @@ public class Testing {
                 quit = true;
             }
         }
+
+        /* from Controler
+        boolean quit = false;
+
+        Simplex simplex = new Simplex(2, 4);
+
+        double[][] standartMatrix = lines.createStandartMatrix();
+        double[] purpLine = purpose.createVector(lines.getLines().size());
+        simplex.fillTable(lines.addPurposeVector(standartMatrix,purpLine));
+
+        output.appendText("Start: \n");
+        output.appendText(simplex.printString());
+
+        // repeat until solution found or unbounded
+        while(!quit){
+            Simplex.ERROR error = simplex.compute();
+
+            if(error == Simplex.ERROR.IS_OPTIMAL){
+                output.appendText("Následující tabulka je optimální: \n");
+                output.appendText(simplex.printString());
+                quit = true;
+            }
+            else if(error == Simplex.ERROR.UNBOUNDED){
+                System.out.println("Neomezené řešení");
+                quit = true;
+            }
+        }
+         */
     }
 }

@@ -3,6 +3,8 @@ package com.example.bp;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
@@ -12,39 +14,35 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class is Javafx Controller for -,,-Aplication
+ * Class is Javafx Controller for LinearProgrammingAplication
  */
 public class LinearProgrammingControler {
 
     private final String lineMiner = "([+-]? ?\\d+) ?[xX]1? ?([+-]? ?\\d+) ?[xXyY]2? ?<= ?([+-]? ?\\d+)";
     private final String purposeMiner = "(max|MAX|min|MIN) ?= ?([+-]? ?\\d+)[xX]1? ?([+-]? ?\\d+)[xXyY]2?";
     private double zoom = 50d;
+    private int numOfConstrains = 2;
 
     /**
-     * Method is run by button "Vypočítej"
+     * Method is run by button "Vykresli"
+     * It parses the text from the input into program representation then calls to show results
      */
     @FXML
     protected void count() {
-        output.setText("Output\n");
-        String lineText1 = restrain1.getText();
-        String lineText2 = restrain2.getText();
-        String purposeText = purposeLine.getText();
-
-        LinearLine linearLine1 = mineLine(lineText1, lineMiner);
-        output.appendText(linearLine1.toString());
-        output.appendText("\n");
-        drawLine(linearLine1, line1);
-
-        LinearLine linearLine2 = mineLine(lineText2,lineMiner);
-        output.appendText(linearLine2.toString());
-        output.appendText("\n");
-        drawLine(linearLine2, line2);
-
-        PurposeLine purpose = minePurposeLine(purposeText, purposeMiner);
 
         LinesArray lines = new LinesArray();
-        lines.addLine(linearLine1);
-        lines.addLine(linearLine2);
+        for (int i = 2; i < numOfConstrains+2; i++){
+            TextField tf = (TextField) constrains.getChildren().get(i-1);
+            String lineText = tf.getText();
+            LinearLine ln = mineLine(lineText, lineMiner);
+            Line line = (Line) graph.getChildren().get(i);
+            drawLine(ln, line);
+            line.setVisible(true);
+            lines.addLine(ln);
+        }
+
+        String purposeText = purposeLine.getText();
+        PurposeLine purpose = minePurposeLine(purposeText, purposeMiner);
 
         output.appendText("Základní řešení: \n");
         output.appendText(lines.findBasicSolutions().toString());
@@ -53,51 +51,56 @@ public class LinearProgrammingControler {
         output.appendText(lines.findOptimalSolution(purpose).toString());
         output.appendText("\n");
 
-        drawPurposeLine(purpose, purpLine, lines.findOptimalSolution(purpose));
-        drawOptimalCircle(lines.findOptimalSolution(purpose), optimalCircle);
-        drawPolygon(lines, possibleSolutionsPolygon);
+        drawShapes(purpose,lines);
 
-        boolean quit = false;
+    }
 
-        Simplex simplex = new Simplex(2, 4);
+    /**
+     * Method is run by button "Přidej Omezení"
+     * When the number of contrains is lower than 10 it adds one TextField (sets it visible)
+     */
+    @FXML
+    protected void addConstrain(){
+        if (numOfConstrains < 10){
+            numOfConstrains++;
+            constrains.getChildren().get(numOfConstrains).setVisible(true);
+        }
+    }
 
-        double[][] standartMatrix = lines.createStandartMatrix();
-        double[] purpLine = purpose.createVector(lines.getLines().size());
-        simplex.fillTable(lines.addPurposeVector(standartMatrix,purpLine));
+    /**
+     * Method is run by button "Odeber Omezení"
+     * When the number iof constrains is higher than 1 it removes TextField (sets it invisible)
+     */
+    @FXML
+    protected void removeConstrain(){
+        if (numOfConstrains > 1){
+            TextField tf = (TextField) constrains.getChildren().get(numOfConstrains);
+            tf.setVisible(false);
+            tf.setText("");
+            numOfConstrains--;
+        }
+    }
 
-        output.appendText("Start: \n");
-        output.appendText(simplex.printString());
+    /**
+     * Method is run by button "Vymazej"
+     * Makes the graph elements invisible and resets the texts in TextFiels on input
+     */
+    @FXML
+    protected void clear(){
+        purpLine.setVisible(false);
+        optimalCircle.setVisible(false);
+        possibleSolutionsPolygon.setVisible(false);
 
-        // repeat until solution found or unbounded
-        while(!quit){
-            Simplex.ERROR error = simplex.compute();
-
-            if(error == Simplex.ERROR.IS_OPTIMAL){
-                output.appendText("Následující tabulka je optimální: \n");
-                output.appendText(simplex.printString());
-                quit = true;
-            }
-            else if(error == Simplex.ERROR.UNBOUNDED){
-                System.out.println("Neomezené řešení");
-                quit = true;
-            }
+        for (int i = 2; i < numOfConstrains+2; i++){
+            TextField tf = (TextField) constrains.getChildren().get(i-1);
+            tf.setText("");
+            Line line = (Line) graph.getChildren().get(i);
+            line.setVisible(false);
         }
     }
 
     @FXML
-    private TextField restrain1;
-
-    @FXML
-    private TextField restrain2;
-
-    @FXML
     private TextField purposeLine;
-
-    @FXML
-    private Line line1;
-
-    @FXML
-    private Line line2;
 
     @FXML
     private Line purpLine;
@@ -110,6 +113,12 @@ public class LinearProgrammingControler {
 
     @FXML
     private TextArea output;
+
+    @FXML
+    private VBox constrains;
+
+    @FXML
+    private AnchorPane graph;
 
     /**
      * Method takes the input and with regex finds constrain coeficients
@@ -199,6 +208,7 @@ public class LinearProgrammingControler {
     private void drawPolygon(LinesArray lines, Polygon polygon) {
         int numberOfPoints = lines.findPossibleSolutions().size();
         ArrayList<Point> possiblePoints = lines.findPossibleSolutions();
+        possiblePoints = satisfyPoints(possiblePoints);
         if (numberOfPoints > 1) {
             Double[] points = new Double[numberOfPoints*2];
             for (int i = 0; i < numberOfPoints; i++){
@@ -206,8 +216,41 @@ public class LinearProgrammingControler {
                 points[2*i] = possiblePoints.get(i).getX() * zoom;
                 points[2*i+1] = possiblePoints.get(i).getY() * (-zoom);
             }
+
             polygon.getPoints().clear();
             polygon.getPoints().addAll(points);
+            polygon.setSmooth(true);
         }
+    }
+
+    /**
+     * Method justify the order of points to see the polygon the right way
+     * @param edges Points that are egdes of polygon
+     * @return justified edges
+     * TODO THIS IS NOT OPTIMAL
+     */
+    private ArrayList<Point> satisfyPoints(ArrayList<Point> edges){
+        ArrayList<Point> justifiedEdges = new ArrayList<>();
+        justifiedEdges.add(edges.get(1));
+        justifiedEdges.add(edges.get(0));
+        for (int i = 2; i < edges.size(); i++){
+            justifiedEdges.add(edges.get(i));
+        }
+        return justifiedEdges;
+    }
+
+    /**
+     * Method draws shapes according to the results of counting into the graph
+     * @param purpose purposeLine
+     * @param lines constrains
+     */
+    private void drawShapes(PurposeLine purpose, LinesArray lines){
+        drawPurposeLine(purpose, purpLine, lines.findOptimalSolution(purpose));
+        drawOptimalCircle(lines.findOptimalSolution(purpose), optimalCircle);
+        drawPolygon(lines, possibleSolutionsPolygon);
+
+        purpLine.setVisible(true);
+        optimalCircle.setVisible(true);
+        possibleSolutionsPolygon.setVisible(true);
     }
 }
