@@ -11,12 +11,18 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class is Javafx Controller for -,,-Aplication
+ */
 public class LinearProgrammingControler {
 
     private final String lineMiner = "([+-]? ?\\d+) ?[xX]1? ?([+-]? ?\\d+) ?[xXyY]2? ?<= ?([+-]? ?\\d+)";
     private final String purposeMiner = "(max|MAX|min|MIN) ?= ?([+-]? ?\\d+)[xX]1? ?([+-]? ?\\d+)[xXyY]2?";
     private double zoom = 50d;
 
+    /**
+     * Method is run by button "Vypočítej"
+     */
     @FXML
     protected void count() {
         output.setText("Output\n");
@@ -105,6 +111,12 @@ public class LinearProgrammingControler {
     @FXML
     private TextArea output;
 
+    /**
+     * Method takes the input and with regex finds constrain coeficients
+     * @param line input
+     * @param miner regex
+     * @return LinearLine object
+     */
     private LinearLine mineLine(String line, String miner){
         LinearLine result = null;
         Pattern pattern = Pattern.compile(miner);
@@ -119,6 +131,12 @@ public class LinearProgrammingControler {
         return result;
     }
 
+    /**
+     * Method takes the input and with regex finds purpose line coeficients
+     * @param line input
+     * @param miner regex
+     * @return PurposeLIne object
+     */
     private PurposeLine minePurposeLine(String line, String miner){
         PurposeLine purposeLine = null;
         Pattern pattern = Pattern.compile(miner);
@@ -137,13 +155,23 @@ public class LinearProgrammingControler {
         return purposeLine;
     }
 
+    /**
+     * Method set the ends of a javafx line -> draws it in the graph
+     * @param linearLine object representation of a contrain
+     * @param line javafx Line
+     */
     private void drawLine (LinearLine linearLine, Line line) {
         Point x0 = linearLine.getNullX();
         line.setEndX(x0.getX() * zoom);
         Point y0 = linearLine.getNullY();
         line.setStartY(y0.getY() * (-zoom));
     }
-
+    /**
+     * Method set the ends of a javafx line -> draws the purpose line in the graph
+     * @param purposeLine object representation of a purpose line
+     * @param line javafx Line
+     * @param solution optimal solution Point
+     */
     private void drawPurposeLine (PurposeLine purposeLine, Line line, Point solution) {
         double valueOfPurpose = ((purposeLine.getCoefX1() * solution.getX()) + (purposeLine.getCoefX2() * solution.getY()));
         LinearLine ll = new LinearLine(purposeLine.getCoefX1(), purposeLine.getCoefX2(), valueOfPurpose);
@@ -153,11 +181,21 @@ public class LinearProgrammingControler {
         line.setStartY(y0.getY() * (-zoom));
     }
 
+    /**
+     * Method draws the javafx circle in the positions of optimal solution point
+     * @param solution optimal solution point
+     * @param circle javafx Circle
+     */
     private void drawOptimalCircle(Point solution, Circle circle) {
         circle.setCenterX(solution.getX() * zoom);
         circle.setCenterY(solution.getY() * (-zoom));
     }
 
+    /**
+     * Method takes the Possible solutions and draws the polygon with them in the graph
+     * @param lines of the constrains
+     * @param polygon javafx polygon
+     */
     private void drawPolygon(LinesArray lines, Polygon polygon) {
         int numberOfPoints = lines.findPossibleSolutions().size();
         ArrayList<Point> possiblePoints = lines.findPossibleSolutions();

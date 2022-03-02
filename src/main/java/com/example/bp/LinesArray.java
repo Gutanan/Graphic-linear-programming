@@ -18,6 +18,10 @@ public class LinesArray {
         lines.add(line);
     }
 
+    /**
+     * Method goes through array of Contrains and count Basic solutions
+     * @return Array list of Points that are Basic Solutions
+     */
     public ArrayList<Point> findBasicSolutions() {
         ArrayList<Point> basicSolutions = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
@@ -38,6 +42,10 @@ public class LinesArray {
         return basicSolutions;
     }
 
+    /**
+     * Method goes through Basic Solutions points and evaluates, whether they are also Possible Solutions points
+     * @return ArrayList of Possible Solutions points
+     */
     public ArrayList<Point> findPossibleSolutions() {
         ArrayList<Point> basicSolutions = findBasicSolutions();
         ArrayList<Point> possibleSolutions = new ArrayList<>();
@@ -57,6 +65,12 @@ public class LinesArray {
         return possibleSolutions;
     }
 
+    /**
+     * Method goes through Possible Solutions points and chooses the one, that is according to the purpose line
+     * optimal
+     * @param purposeLine is the Purpose line
+     * @return one Point which appears to be optimal accordint to the purpose line
+     */
     public Point findOptimalSolution(PurposeLine purposeLine){
         ArrayList<Point> possibleSolutions = findPossibleSolutions();
         double x1 = purposeLine.getCoefX1();
@@ -90,7 +104,7 @@ public class LinesArray {
     }
 
     /**
-     * Method use the Cramer's rule to find the intersection of two lines
+     * Method uses the Cramer's rule to find the intersection of two lines
      * @param a Line
      * @param b Line
      * @return Point of intersection
@@ -119,12 +133,21 @@ public class LinesArray {
         return intersection;
     }
 
+    /**
+     * Method counts determinant
+     * @param matrix from which the determinant is beeing counted
+     * @return determinant
+     */
     private double countDeterminantTwobyTwo(double[][] matrix){
         double determinant;
         determinant = (matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]);
         return determinant;
     }
 
+    /**
+     * Method takes the constrains and builds a matrix for simplex method
+     * @return
+     */
     public double[][] createStandartMatrix(){
         int rows = lines.size() + 1;
         int cols = 3 + lines.size();
@@ -160,6 +183,12 @@ public class LinesArray {
         System.out.println();
     }
 
+    /**
+     * Method adds Purpose line to the matrix for simplex method
+     * @param matrix that represents constrains
+     * @param vector of the purpose line
+     * @return matrix for simplex method
+     */
     public double[][] addPurposeVector(double[][] matrix, double[] vector){
         for (int k = 0; k < lines.size() + 3; k++){
             matrix[lines.size()][k] = vector[k];

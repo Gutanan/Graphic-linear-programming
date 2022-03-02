@@ -1,5 +1,8 @@
 package com.example.bp;
 
+/**
+ * Class represents the purpose line with its two coeficients (x1; x2) and purpose type (min; max)
+ */
 public class PurposeLine {
     private double coefX1; //multiplier of X1
     private double coefX2; //multiplier of X2
@@ -11,6 +14,9 @@ public class PurposeLine {
         this.purpose = purpose;
     }
 
+    /**
+     * Purpose can be MAX or MIN value
+     */
     public static enum PURPOSE{
         MAX,
         MIN
@@ -36,6 +42,11 @@ public class PurposeLine {
         this.coefX2 = coefX2;
     }
 
+    /**
+     * Method creates vector representation of purpose lide for simplex method
+     * @param numberOfConstrains is number od Constrains in example
+     * @return vector for simplex method
+     */
     public double[] createVector(int numberOfConstrains){
         double[] vector = new double[numberOfConstrains + 3];
         vector[0] = coefX1 * -1;

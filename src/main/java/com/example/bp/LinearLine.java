@@ -1,5 +1,8 @@
 package com.example.bp;
 
+/**
+ * Class represents object of a linear line with 2 coeficients (x1; x2) and its riht side
+ */
 public class LinearLine {
     private Point nullX;
     private Point nullY;
@@ -23,11 +26,20 @@ public class LinearLine {
         return nullY;
     }
 
+    /**
+     * Method counts the intersections with X axis
+     * @param coefX1 from Line
+     * @param rightSide from Line
+     */
     private void countNullX(double coefX1, double rightSide) {
         double x = rightSide/coefX1;
         this.nullX = new Point(x, 0d);
     }
-
+    /**
+     * Method counts the intersections with Y axis
+     * @param coefX2 from Line
+     * @param rightSide from Line
+     */
     private void countNullY(double coefX2, double rightSide) {
         double y = rightSide/coefX2;
         this.nullY = new Point(0d,y);

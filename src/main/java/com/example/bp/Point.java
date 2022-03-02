@@ -1,5 +1,8 @@
 package com.example.bp;
 
+/**
+ * Class is a representation of a point in the graph area
+ */
 public class Point {
     private double x;
     private double y;

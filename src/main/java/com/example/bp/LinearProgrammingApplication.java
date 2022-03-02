@@ -7,6 +7,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Class runs the javafx application
+ */
 public class LinearProgrammingApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {

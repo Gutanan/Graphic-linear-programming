@@ -1,5 +1,8 @@
 package com.example.bp;
 
+/**
+ * Method for testing purposes
+ */
 public class Testing {
     public static void main(String[] args) {
         LinearLine line1 = new LinearLine(1,1,4);
