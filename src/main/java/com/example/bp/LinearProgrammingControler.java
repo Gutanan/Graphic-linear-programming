@@ -166,14 +166,65 @@ public class LinearProgrammingControler {
 
     /**
      * Method set the ends of a javafx line -> draws it in the graph
+     * When it has both null point in positive part of axis it connects them
+     * When it goes through null of axis it counts the second point at the end of the graph
+     * When it has exactly one null point in positive patr of axis it counts the second point
+     * at the end of the graph
+     * While counting it figures out whether it ends on the right side or on the upper side of the graph
      * @param linearLine object representation of a contrain
      * @param line javafx Line
      */
     private void drawLine (LinearLine linearLine, Line line) {
-        Point x0 = linearLine.getNullX();
-        line.setEndX(x0.getX() * zoom);
-        Point y0 = linearLine.getNullY();
-        line.setStartY(y0.getY() * (-zoom));
+        if (linearLine.getNullX().getX() > 0 && linearLine.getNullY().getY() > 0){
+            Point x0 = linearLine.getNullX();
+            line.setEndX(x0.getX() * zoom);
+            line.setEndY(x0.getY() * (-zoom));
+            Point y0 = linearLine.getNullY();
+            line.setStartX(y0.getX() * zoom);
+            line.setStartY(y0.getY() * (-zoom));
+        }
+        if (linearLine.getNullX().getX() < 0 && linearLine.getNullY().getY() > 0){
+            line.setStartX(linearLine.getNullY().getX() * zoom);
+            line.setStartY(linearLine.getNullY().getY() * (-zoom));
+            double y = (((450d/zoom)*linearLine.getCoefX1())-linearLine.getRightSide())/(-linearLine.getCoefX2());
+            System.out.println(y);
+            if (y <= (450d/zoom)){
+                line.setEndX(450d);
+                line.setEndY(y * (-zoom));
+            } else {
+                double x = (((450d/zoom)*linearLine.getCoefX2())-linearLine.getRightSide())/(-linearLine.getCoefX1());
+                line.setEndX(x * zoom);
+                line.setEndY(-450d);
+            }
+        }
+        if (linearLine.getNullX().getX() > 0 && linearLine.getNullY().getY() < 0){
+            line.setStartX(linearLine.getNullX().getX() * zoom);
+            line.setStartY(linearLine.getNullX().getY() * (-zoom));
+            double y = (((450d/zoom)*linearLine.getCoefX1())-linearLine.getRightSide())/(-linearLine.getCoefX2());
+            System.out.println(y);
+            if (y <= (450d/zoom)){
+                line.setEndX(450d);
+                line.setEndY(y * (-zoom));
+            } else {
+                double x = (((450d/zoom)*linearLine.getCoefX2())-linearLine.getRightSide())/(-linearLine.getCoefX1());
+                line.setEndX(x * zoom);
+                line.setEndY(-450d);
+            }
+        }
+        if (linearLine.getNullX().getX() == 0 && linearLine.getNullY().getY() == 0){
+            line.setStartX(0d);
+            line.setStartY(0d);
+            double y = (((450d/zoom)*linearLine.getCoefX1())-linearLine.getRightSide())/(-linearLine.getCoefX2());
+            if (y <= (450d/zoom)){
+                line.setEndX(450d);
+                line.setEndY(y * (-zoom));
+            } else {
+                double x = (((450d/zoom)*linearLine.getCoefX2())-linearLine.getRightSide())/linearLine.getCoefX1();
+                line.setEndX(x * zoom);
+                line.setEndY(-450d);
+            }
+        }
+
     }
     /**
      * Method set the ends of a javafx line -> draws the purpose line in the graph
@@ -212,7 +263,6 @@ public class LinearProgrammingControler {
         if (numberOfPoints > 1) {
             Double[] points = new Double[numberOfPoints*2];
             for (int i = 0; i < numberOfPoints; i++){
-                System.out.println(possiblePoints.get(i).toString());
                 points[2*i] = possiblePoints.get(i).getX() * zoom;
                 points[2*i+1] = possiblePoints.get(i).getY() * (-zoom);
             }
