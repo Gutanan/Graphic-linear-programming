@@ -30,6 +30,7 @@ public class LinearProgrammingControler {
     @FXML
     protected void count() {
 
+        output.clear();
         LinesArray lines = new LinesArray();
         for (int i = 2; i < numOfConstrains+2; i++){
             TextField tf = (TextField) constrains.getChildren().get(i-1);
@@ -46,6 +47,9 @@ public class LinearProgrammingControler {
 
         output.appendText("Základní řešení: \n");
         output.appendText(lines.findBasicSolutions().toString());
+        output.appendText("\n");
+        output.appendText("Přípustná základní řešení: \n");
+        output.appendText(lines.findPossibleSolutions().toString());
         output.appendText("\n");
         output.appendText("Optimální řešení: \n");
         output.appendText(lines.findOptimalSolution(purpose).toString());
@@ -77,7 +81,9 @@ public class LinearProgrammingControler {
             TextField tf = (TextField) constrains.getChildren().get(numOfConstrains);
             tf.setVisible(false);
             tf.setText("");
+            graph.getChildren().get(numOfConstrains+1).setVisible(false);
             numOfConstrains--;
+            count();
         }
     }
 
@@ -170,6 +176,7 @@ public class LinearProgrammingControler {
      * When it goes through null of axis it counts the second point at the end of the graph
      * When it has exactly one null point in positive patr of axis it counts the second point
      * at the end of the graph
+     * When both null points are in negative parts the line is only in the inception
      * While counting it figures out whether it ends on the right side or on the upper side of the graph
      * @param linearLine object representation of a contrain
      * @param line javafx Line
@@ -223,6 +230,12 @@ public class LinearProgrammingControler {
                 line.setEndX(x * zoom);
                 line.setEndY(-450d);
             }
+        }
+        if (linearLine.getNullX().getX() < 0 && linearLine.getNullY().getY() < 0){
+            line.setStartX(0d);
+            line.setStartY(0d);
+            line.setEndX(0d);
+            line.setEndY(0d);
         }
 
     }

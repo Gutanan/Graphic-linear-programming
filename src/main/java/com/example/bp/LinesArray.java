@@ -38,8 +38,29 @@ public class LinesArray {
                 basicSolutions.add(lines.get(i).getNullY());
             }
         }
-        basicSolutions.add(new Point(0d, 0d));
-        return basicSolutions;
+
+        boolean add;
+        ArrayList<Point> basicSolutionsDuplicates = new ArrayList<>();
+        if (basicSolutions.size() > 0 ){
+            basicSolutionsDuplicates.add(basicSolutions.get(0));
+        }
+        for (int i = 1; i < basicSolutions.size(); i++) {
+            double xi = basicSolutions.get(i).getX();
+            double yi = basicSolutions.get(i).getY();
+            add = true;
+            for (int j = 1; j < basicSolutionsDuplicates.size(); j++){
+                double xj = basicSolutionsDuplicates.get(j).getX();
+                double yj = basicSolutionsDuplicates.get(j).getX();
+                if (xi == xj || yi == yj){
+                    add = false;
+                }
+            }
+            if (add){
+                basicSolutionsDuplicates.add(basicSolutions.get(i));
+            }
+        }
+        basicSolutionsDuplicates.add(new Point(0d, 0d));
+        return basicSolutionsDuplicates;
     }
 
     /**
