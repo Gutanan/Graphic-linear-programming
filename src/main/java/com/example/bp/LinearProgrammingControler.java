@@ -1,6 +1,7 @@
 package com.example.bp;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -29,7 +30,7 @@ public class LinearProgrammingControler {
      */
     @FXML
     protected void count() {
-
+        setLabels();
         output.clear();
         LinesArray lines = new LinesArray();
         for (int i = 2; i < numOfConstrains+2; i++){
@@ -106,6 +107,18 @@ public class LinearProgrammingControler {
     }
 
     @FXML
+    protected void zoomPlus(){
+        zoom = zoom * 2;
+        count();
+    }
+
+    @FXML
+    protected void zoomMinus(){
+        zoom = zoom / 2;
+        count();
+    }
+
+    @FXML
     private TextField purposeLine;
 
     @FXML
@@ -125,6 +138,30 @@ public class LinearProgrammingControler {
 
     @FXML
     private AnchorPane graph;
+
+    @FXML
+    private Label labelx1;
+
+    @FXML
+    private Label labelx2;
+
+    @FXML
+    private Label labelx3;
+
+    @FXML
+    private Label labelx4;
+
+    @FXML
+    private Label labely1;
+
+    @FXML
+    private Label labely2;
+
+    @FXML
+    private Label labely3;
+
+    @FXML
+    private Label labely4;
 
     /**
      * Method takes the input and with regex finds constrain coeficients
@@ -315,5 +352,20 @@ public class LinearProgrammingControler {
         purpLine.setVisible(true);
         optimalCircle.setVisible(true);
         possibleSolutionsPolygon.setVisible(true);
+    }
+
+    private void setLabels(){
+        double first = (100/zoom);
+        double second = (200/zoom);
+        double third = (300/zoom);
+        double fourth = (400/zoom);
+        labelx1.setText(String.valueOf(first));
+        labely1.setText(String.valueOf(first));
+        labelx2.setText(String.valueOf(second));
+        labely2.setText(String.valueOf(second));
+        labelx3.setText(String.valueOf(third));
+        labely3.setText(String.valueOf(third));
+        labelx4.setText(String.valueOf(fourth));
+        labely4.setText(String.valueOf(fourth));
     }
 }
