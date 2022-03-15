@@ -7,17 +7,17 @@ public class Testing {
     public static void main(String[] args) {
         LinearLine line1 = new LinearLine(1,1,4);
         LinearLine line2 = new LinearLine(1,3,6);
-        //Line line3 = new Line(4,3,12);
+        LinearLine line3 = new LinearLine(4,3,12);
         PurposeLine purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, 3, 5);
         System.out.println("Přímka 1:");
         System.out.println(line1.toString());
         System.out.println("Přímka 2:");
         System.out.println(line2.toString());
-        //System.out.println(line3.toString());
+        System.out.println(line3.toString());
         LinesArray lines = new LinesArray();
         lines.addLine(line1);
         lines.addLine(line2);
-        //lines.addLine(line3);
+        lines.addLine(line3);
 
         System.out.println("Základní řešení");
         System.out.println(lines.findBasicSolutions());
@@ -26,7 +26,16 @@ public class Testing {
 
         boolean quit = false;
 
-        Simplex simplex = new Simplex(2, 4);
+        SimplexMethod simplex = new SimplexMethod(lines.getLines().size(),2+lines.getLines().size(), SimplexMethod.PURPOSE.MAX);
+
+        double[][] standartMatrix = lines.createStandartMatrix();
+        double[] purpLine = purposeLine.createVector(lines.getLines().size());
+        simplex.fillTable(lines.addPurposeVector(standartMatrix,purpLine));
+
+        System.out.println(simplex.printString());
+        simplex.iterateTable();
+        System.out.println(simplex.printString());
+        /*Simplex simplex = new Simplex(2, 4);
 
         double[][] standartMatrix = lines.createStandartMatrix();
         double[] purpLine = purposeLine.createVector(lines.getLines().size());
@@ -49,7 +58,7 @@ public class Testing {
                 quit = true;
             }
         }
-
+        */
         /* from Controler
         boolean quit = false;
 
