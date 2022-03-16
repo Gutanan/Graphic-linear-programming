@@ -28,9 +28,9 @@ public class Testing {
 
         boolean quit = false;
 
-        SimplexMethod simplex = new SimplexMethod(lines.getLines().size(),2+lines.getLines().size(), SimplexMethod.PURPOSE.MAX);
+        SimplexMethod simplex = new SimplexMethod(lines.getLines().size()+1,3+lines.getLines().size(), SimplexMethod.PURPOSE.MAX); //+1 test //TODO
 
-        double[][] standartMatrix = lines.createStandartMatrix();
+        double[][] standartMatrix = lines.createMatrix();
         double[] purpLine = purposeLine.createVector(lines.getLines().size());
         simplex.fillTable(lines.addPurposeVector(standartMatrix,purpLine));
 

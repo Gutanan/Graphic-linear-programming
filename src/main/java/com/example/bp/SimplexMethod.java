@@ -95,7 +95,6 @@ public class SimplexMethod {
         return outcome;
     }
 
-    //max purposefunction
     public void iterateTable() {
         if (this.purpose.equals(PURPOSE.MAX)) {
             while (areAllNullNegative(table[rows - 1])) {
