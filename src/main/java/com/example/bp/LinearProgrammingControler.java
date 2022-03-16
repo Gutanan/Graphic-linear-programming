@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class LinearProgrammingControler {
 
-    private final String lineMiner = "([+-]? ?\\d+) ?[xX]1? ?([+-]? ?\\d+) ?[xXyY]2? ?<= ?([+-]? ?\\d+)";
+    private final String lineMiner = "([+-]? ?\\d+) ?[xX]1? ?([+-]? ?\\d+) ?[xXyY]2? ?([<>]?=) ?([+-]? ?\\d+)";
     private final String purposeMiner = "(max|MAX|min|MIN) ?= ?([+-]? ?\\d+)[xX]1? ?([+-]? ?\\d+)[xXyY]2?";
     private double zoom = 50d;
     private int numOfConstrains = 2;
@@ -173,13 +173,22 @@ public class LinearProgrammingControler {
         LinearLine result = null;
         Pattern pattern = Pattern.compile(miner);
         Matcher matcher = pattern.matcher(line);
-        String[] coefs = new String[3];
+        String[] coefs = new String[4];
         while (matcher.find()) {
-            coefs[0] = matcher.group(1).replaceAll("\\s", "");
-            coefs[1] = matcher.group(2).replaceAll("\\s", "");
-            coefs[2] = matcher.group(3).replaceAll("\\s", "");
+            coefs[0] = matcher.group(1).replaceAll("\\s", ""); //x1
+            coefs[1] = matcher.group(2).replaceAll("\\s", ""); //x2
+            coefs[2] = matcher.group(3).replaceAll("\\s", ""); //restrain
+            coefs[3] = matcher.group(4).replaceAll("\\s", ""); //right side
         }
-        result = new LinearLine(Integer.parseInt(coefs[0]),Integer.parseInt(coefs[1]),Integer.parseInt(coefs[2]));
+        LinearLine.RESTRAIN restrain = null;
+        if (coefs[2].equalsIgnoreCase("<=")){
+            restrain = LinearLine.RESTRAIN.LOWER;
+        } else if (coefs[2].equalsIgnoreCase(">=")){
+            restrain = LinearLine.RESTRAIN.GREATER;
+        } else {
+            restrain = LinearLine.RESTRAIN.EQUAL;
+        }
+        result = new LinearLine(Integer.parseInt(coefs[0]),Integer.parseInt(coefs[1]),Integer.parseInt(coefs[3]), restrain);
         return result;
     }
 
@@ -277,14 +286,14 @@ public class LinearProgrammingControler {
 
     }
     /**
-     * Method set the ends of a javafx line -> draws the purpose line in the graph
+     * Method sets the ends of a javafx line -> draws the purpose line in the graph
      * @param purposeLine object representation of a purpose line
      * @param line javafx Line
      * @param solution optimal solution Point
      */
     private void drawPurposeLine (PurposeLine purposeLine, Line line, Point solution) {
         double valueOfPurpose = ((purposeLine.getCoefX1() * solution.getX()) + (purposeLine.getCoefX2() * solution.getY()));
-        LinearLine ll = new LinearLine(purposeLine.getCoefX1(), purposeLine.getCoefX2(), valueOfPurpose);
+        LinearLine ll = new LinearLine(purposeLine.getCoefX1(), purposeLine.getCoefX2(), valueOfPurpose, LinearLine.RESTRAIN.EQUAL);
         Point x0 = ll.getNullX();
         line.setEndX(x0.getX() * zoom);
         Point y0 = ll.getNullY();

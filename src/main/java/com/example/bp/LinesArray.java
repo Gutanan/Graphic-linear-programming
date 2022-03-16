@@ -19,7 +19,7 @@ public class LinesArray {
     }
 
     /**
-     * Method goes through array of Contrains and count Basic solutions
+     * Method goes through array of Constrains and count Basic solutions
      * @return Array list of Points that are Basic Solutions
      */
     public ArrayList<Point> findBasicSolutions() {
@@ -50,8 +50,8 @@ public class LinesArray {
             add = true;
             for (int j = 1; j < basicSolutionsDuplicates.size(); j++){
                 double xj = basicSolutionsDuplicates.get(j).getX();
-                double yj = basicSolutionsDuplicates.get(j).getX();
-                if (xi == xj || yi == yj){
+                double yj = basicSolutionsDuplicates.get(j).getY();
+                if (xi == xj && yi == yj){
                     add = false;
                 }
             }
@@ -76,9 +76,22 @@ public class LinesArray {
             isPossible = true;
             for (int j = 0; j < lines.size(); j++) {
                 double value = ((lines.get(j).getCoefX1()*basicSolutions.get(i).getX()) + (lines.get(j).getCoefX2()*basicSolutions.get(i).getY()));
-                if (value > lines.get(j).getRightSide()) {
-                    isPossible = false;
+                if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.LOWER)){
+                    if (value > lines.get(j).getRightSide()) {
+                        isPossible = false;
+                    }
                 }
+                if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.GREATER)){
+                    if (value < lines.get(j).getRightSide()) {
+                        isPossible = false;
+                    }
+                }
+                if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.EQUAL)){
+                    if (value != lines.get(j).getRightSide()) {
+                        isPossible = false;
+                    }
+                }
+
             }
             if (isPossible) {
                 possibleSolutions.add(basicSolutions.get(i));

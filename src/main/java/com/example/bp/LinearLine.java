@@ -9,14 +9,25 @@ public class LinearLine {
     private double coefX1; //multiplier of X1
     private double coefX2; //multiplier of X2
     private double rightSide; //right side of equation of line
+    private RESTRAIN restrain;
 
-    public LinearLine(double coefX1, double coefX2, double rightSide) {
+    public LinearLine(double coefX1, double coefX2, double rightSide, RESTRAIN restrain) {
         this.coefX1 = coefX1;
         this.coefX2 = coefX2;
         this.rightSide = rightSide;
+        this.restrain = restrain;
         countNullX(coefX1,rightSide);
         countNullY(coefX2,rightSide);
     }
+
+    /**
+     * Restrain can be GREATER or LOWER or EQUAL value
+     */
+    public static enum RESTRAIN{
+        GREATER,
+        LOWER,
+        EQUAL
+    };
 
     public Point getNullX() {
         return nullX;
@@ -67,6 +78,10 @@ public class LinearLine {
 
     public void setRightSide(double rightSide) {
         this.rightSide = rightSide;
+    }
+
+    public RESTRAIN getRestrain() {
+        return restrain;
     }
 
     public String toString(){
