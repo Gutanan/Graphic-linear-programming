@@ -5,11 +5,11 @@ package com.example.bp;
  */
 public class Testing {
     public static void main(String[] args) {
-        LinearLine line1 = new LinearLine(2,1,2, LinearLine.RESTRAIN.GREATER);
+        //LinearLine line1 = new LinearLine(2,1,2, LinearLine.RESTRAIN.GREATER);
         LinearLine line2 = new LinearLine(4,2,8, LinearLine.RESTRAIN.LOWER);
-        //LinearLine line1 = new LinearLine(1,1,4, LinearLine.RESTRAIN.LOWER);
-        //LinearLine line2 = new LinearLine(1,3,6, LinearLine.RESTRAIN.LOWER);
-        LinearLine line3 = new LinearLine(4,3,12, LinearLine.RESTRAIN.EQUAL);
+        LinearLine line1 = new LinearLine(1,1,4, LinearLine.RESTRAIN.LOWER);
+        LinearLine line3 = new LinearLine(1,3,6, LinearLine.RESTRAIN.LOWER);
+        //LinearLine line3 = new LinearLine(4,3,12, LinearLine.RESTRAIN.EQUAL);
         PurposeLine purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, 3, 5);
         System.out.println("Přímka 1:");
         System.out.println(line1.toString());
@@ -23,6 +23,8 @@ public class Testing {
 
         System.out.println("Základní řešení");
         System.out.println(lines.findBasicSolutions());
+        System.out.println("Přípustná základní řešení");
+        System.out.println(lines.findPossibleSolutions());
         System.out.println("Optimální řešení");
         System.out.println(lines.findOptimalSolution(purposeLine));
 
@@ -44,8 +46,8 @@ public class Testing {
         simplex.fillTable(lines.addPurposeVector(standartMatrix,purpLine));
 
         System.out.println(simplex.printString());
-        //simplex.iterateTable();
-        //System.out.println(simplex.printString());
+        simplex.iterateTable();
+        System.out.println(simplex.printString());
 
 
 

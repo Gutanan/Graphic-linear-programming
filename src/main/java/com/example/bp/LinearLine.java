@@ -44,6 +44,7 @@ public class LinearLine {
      */
     private void countNullX(double coefX1, double rightSide) {
         double x = rightSide/coefX1;
+        round(x,2);
         this.nullX = new Point(x, 0d);
     }
     /**
@@ -53,6 +54,7 @@ public class LinearLine {
      */
     private void countNullY(double coefX2, double rightSide) {
         double y = rightSide/coefX2;
+        round(y,2);
         this.nullY = new Point(0d,y);
     }
 
@@ -82,6 +84,15 @@ public class LinearLine {
 
     public RESTRAIN getRestrain() {
         return restrain;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
     public String toString(){

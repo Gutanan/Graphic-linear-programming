@@ -78,6 +78,7 @@ public class LinesArray {
             isPossible = true;
             for (int j = 0; j < lines.size(); j++) {
                 double value = ((lines.get(j).getCoefX1() * basicSolutions.get(i).getX()) + (lines.get(j).getCoefX2() * basicSolutions.get(i).getY()));
+                value = round(value,2);
                 if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
                     if (value > lines.get(j).getRightSide()) {
                         isPossible = false;
@@ -167,8 +168,8 @@ public class LinesArray {
 
         x = countDeterminantTwobyTwo(detX1) / countDeterminantTwobyTwo(detX2);
         y = countDeterminantTwobyTwo(detY1) / countDeterminantTwobyTwo(detY2);
-        intersection.setX(x);
-        intersection.setY(y);
+        intersection.setX(round(x,2));
+        intersection.setY(round(y,2));
         return intersection;
     }
 
@@ -361,6 +362,15 @@ public class LinesArray {
         }
         //print(matrix);
         return matrix;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
 
