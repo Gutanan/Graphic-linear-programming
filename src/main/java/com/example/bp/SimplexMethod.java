@@ -6,6 +6,7 @@ public class SimplexMethod {
     private double[][] table; // simplex tableau
     private boolean solutionIsUnbounded = false;
     private PURPOSE purpose;
+    private boolean isTwoPhase;
 
 
     public static enum ERROR {
@@ -19,11 +20,12 @@ public class SimplexMethod {
         MIN
     };
 
-    public SimplexMethod(int numOfConstraints, int numOfUnknowns, PURPOSE purpose) {
+    public SimplexMethod(int numOfConstraints, int numOfUnknowns, PURPOSE purpose, boolean isTwoPhase) {
         rows = numOfConstraints + 1; // row number + 1
         cols = numOfUnknowns + 1;   // column number + 1
         this.purpose = purpose;
         table = new double[rows][]; // create a 2d array
+        this.isTwoPhase = isTwoPhase;
 
         // initialize references to arrays
         for (int i = 0; i < rows; i++) {

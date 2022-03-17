@@ -44,14 +44,14 @@ public class PurposeLine {
 
     /**
      * Method creates vector representation of purpose lide for simplex method
-     * @param numberOfConstrains is number od Constrains in example
+     * @param numberOfCols is number of columns in example
      * @return vector for simplex method
      */
-    public double[] createVector(int numberOfConstrains){
-        double[] vector = new double[numberOfConstrains + 3];
+    public double[] createVector(int numberOfCols){
+        double[] vector = new double[numberOfCols];
         vector[0] = coefX1 * -1;
         vector[1] = coefX2 * -1;
-        for (int i = 2; i < numberOfConstrains + 3; i++){
+        for (int i = 2; i < numberOfCols; i++){
             vector[i] = 0;
         }
         return vector;

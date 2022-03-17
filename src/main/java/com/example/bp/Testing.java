@@ -9,7 +9,7 @@ public class Testing {
         LinearLine line2 = new LinearLine(4,2,8, LinearLine.RESTRAIN.LOWER);
         //LinearLine line1 = new LinearLine(1,1,4, LinearLine.RESTRAIN.LOWER);
         //LinearLine line2 = new LinearLine(1,3,6, LinearLine.RESTRAIN.LOWER);
-        //LinearLine line3 = new LinearLine(4,3,12, LinearLine.RESTRAIN.LOWER);
+        LinearLine line3 = new LinearLine(4,3,12, LinearLine.RESTRAIN.EQUAL);
         PurposeLine purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, 3, 5);
         System.out.println("Přímka 1:");
         System.out.println(line1.toString());
@@ -19,7 +19,7 @@ public class Testing {
         LinesArray lines = new LinesArray();
         lines.addLine(line1);
         lines.addLine(line2);
-        //lines.addLine(line3);
+        lines.addLine(line3);
 
         System.out.println("Základní řešení");
         System.out.println(lines.findBasicSolutions());
@@ -28,15 +28,27 @@ public class Testing {
 
         boolean quit = false;
 
-        SimplexMethod simplex = new SimplexMethod(lines.getLines().size()+1,3+lines.getLines().size(), SimplexMethod.PURPOSE.MAX); //+1 test //TODO
+        int numOfAuxiliary = lines.getNumOfAuxiliary();
+        int numOfAdditional = lines.getNumOfAdditional();
+        int twoPhase = 0;
+        boolean isTwoPhase = false;
+        if (numOfAuxiliary > 0){
+            twoPhase = 1;
+           isTwoPhase = true;
+        }
+
+        SimplexMethod simplex = new SimplexMethod(lines.getLines().size()+twoPhase,2+numOfAdditional+numOfAuxiliary, SimplexMethod.PURPOSE.MAX, isTwoPhase);
 
         double[][] standartMatrix = lines.createMatrix();
-        double[] purpLine = purposeLine.createVector(lines.getLines().size());
+        double[] purpLine = purposeLine.createVector(3+numOfAdditional+numOfAuxiliary);
         simplex.fillTable(lines.addPurposeVector(standartMatrix,purpLine));
 
         System.out.println(simplex.printString());
-        simplex.iterateTable();
-        System.out.println(simplex.printString());
+        //simplex.iterateTable();
+        //System.out.println(simplex.printString());
+
+
+
         /*Simplex simplex = new Simplex(2, 4);
 
         double[][] standartMatrix = lines.createStandartMatrix();
