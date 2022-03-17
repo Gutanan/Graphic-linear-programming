@@ -14,12 +14,16 @@ public class SimplexMethod {
         NOT_OPTIMAL,
         IS_OPTIMAL,
         UNBOUNDED
-    };
+    }
+
+    ;
 
     public static enum PURPOSE {
         MAX,
         MIN
-    };
+    }
+
+    ;
 
     public SimplexMethod(int numOfConstraints, int numOfUnknowns, PURPOSE purpose, boolean isTwoPhase) {
         rows = numOfConstraints + 1; // row number + 1
@@ -27,7 +31,7 @@ public class SimplexMethod {
         this.purpose = purpose;
         table = new double[rows][]; // create a 2d array
         this.isTwoPhase = isTwoPhase;
-        if (isTwoPhase){
+        if (isTwoPhase) {
             actualPurpose = purpose;
             this.purpose = PURPOSE.MIN;
         }
@@ -108,7 +112,13 @@ public class SimplexMethod {
                 int enteringVariable = findPositionMin(table[rows - 1]);
                 double[] valuesOfExitingVariable = new double[rows - 1];
                 for (int i = 0; i < valuesOfExitingVariable.length; i++) {
-                    valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                    double value = table[i][cols - 1] / table[i][enteringVariable];
+                    if (value > 0){
+                        valuesOfExitingVariable[i] = value;
+                    } else {
+                        valuesOfExitingVariable[i] = Double.MAX_VALUE;
+                    }
+                    //valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
                 }
                 int exitingVariable = findPositionMin(valuesOfExitingVariable);
                 double keyElement = table[exitingVariable][enteringVariable];
@@ -127,9 +137,17 @@ public class SimplexMethod {
         } else {
             while (areAllNullPositive(table[rows - 1])) {
                 int enteringVariable = findPositionMax(table[rows - 1]);
-                double[] valuesOfExitingVariable = new double[rows - 1];
-                for (int i = 0; i < valuesOfExitingVariable.length; i++) {
-                    valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                double[] valuesOfExitingVariable;
+                if (isTwoPhase) {
+                    valuesOfExitingVariable = new double[rows - 2];
+                    for (int i = 0; i < valuesOfExitingVariable.length - 1; i++) {
+                        valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                    }
+                } else {
+                    valuesOfExitingVariable = new double[rows - 1];
+                    for (int i = 0; i < valuesOfExitingVariable.length; i++) {
+                        valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                    }
                 }
                 int exitingVariable = findPositionMax(valuesOfExitingVariable);
                 double keyElement = table[exitingVariable][enteringVariable];
@@ -148,5 +166,28 @@ public class SimplexMethod {
         }
     }
 
-
+    public void generateNewTable(int numOfAdditional, int numberOfAuxiliary) {
+        if (isTwoPhase) {
+            double newTableRows[][] = new double[rows - 1][cols];
+            for (int i = 0; i < newTableRows.length; i++) {
+                System.arraycopy(table[i], 0, newTableRows[i], 0, table[i].length);
+            }
+            double newTableRowsCols[][] = new double[rows - 1][cols-numberOfAuxiliary];
+            for (int i = 0; i < newTableRowsCols.length; i++) {
+                for (int j = 0; j < newTableRows[0].length; j++) {
+                    if (j < 2+numOfAdditional){
+                        newTableRowsCols[i][j] = newTableRows[i][j];
+                    } else if (j == newTableRows[0].length-1){
+                            newTableRowsCols[i][j-numberOfAuxiliary] = newTableRows[i][j];
+                        }
+                    }
+                }
+            this.table = newTableRowsCols;
+            this.rows--;
+            this.cols -= numberOfAuxiliary;
+            this.purpose = this.actualPurpose;
+            this.isTwoPhase = false;
+            System.out.println(printString());
+        }
+    }
 }
