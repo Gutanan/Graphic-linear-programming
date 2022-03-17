@@ -140,13 +140,25 @@ public class SimplexMethod {
                 double[] valuesOfExitingVariable;
                 if (isTwoPhase) {
                     valuesOfExitingVariable = new double[rows - 2];
-                    for (int i = 0; i < valuesOfExitingVariable.length - 1; i++) {
-                        valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                    for (int i = 0; i < valuesOfExitingVariable.length; i++) {
+                        double value = table[i][cols - 1] / table[i][enteringVariable];
+                        if (value > 0){
+                            valuesOfExitingVariable[i] = value;
+                        } else {
+                            valuesOfExitingVariable[i] = Double.MAX_VALUE;
+                        }
+
                     }
                 } else {
                     valuesOfExitingVariable = new double[rows - 1];
                     for (int i = 0; i < valuesOfExitingVariable.length; i++) {
-                        valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                        double value = table[i][cols - 1] / table[i][enteringVariable];
+                        if (value > 0){
+                            valuesOfExitingVariable[i] = value;
+                        } else {
+                            valuesOfExitingVariable[i] = Double.MAX_VALUE;
+                        }
+
                     }
                 }
                 int exitingVariable = findPositionMax(valuesOfExitingVariable);
