@@ -333,19 +333,94 @@ public class LinearProgrammingControler {
     }
 
     /**
-     * Method justify the order of points to see the polygon the right way
+     * Method justify the order of points to draw the polygon the right way
      * @param edges Points that are egdes of polygon
      * @return justified edges
      * TODO THIS IS NOT OPTIMAL
      */
     private ArrayList<Point> satisfyPoints(ArrayList<Point> edges){
-        ArrayList<Point> justifiedEdges = new ArrayList<>();
-        justifiedEdges.add(edges.get(1));
-        justifiedEdges.add(edges.get(0));
-        for (int i = 2; i < edges.size(); i++){
-            justifiedEdges.add(edges.get(i));
+        //Find Centroid of polygon
+        Point centroid = findCentroid(edges);
+        //Sort edges
+        sortPointsClockwise(edges, centroid);
+        return edges;
+    }
+
+    private Point findCentroid(ArrayList<Point> edges){
+        double x = 0;
+        double y = 0;
+        for (int i = 0; i < edges.size(); i++){
+            x += edges.get(i).getX();
+            y += edges.get(i).getY();
         }
-        return justifiedEdges;
+        return new Point(x/edges.size(), y/edges.size());
+    }
+
+    private ArrayList<Point> sortPointsClockwise(ArrayList<Point> edges, Point center) {
+        boolean changed;
+        do {
+            changed = false;
+            for (int i = 0; i < edges.size() - 1; i++) {
+                if (comparePoint(edges.get(i+1), edges.get(i), center)) {
+                    switchElements(i, i+1, edges);
+                    changed = true;
+                }
+            }
+        } while (changed);
+
+        return edges;
+    }
+
+    // http://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
+    private static boolean comparePoint(Point a, Point b, Point center) {
+
+        if (a.getX() - center.getX() >= 0 && b.getX() - center.getX() < 0) {
+            return true;
+        }
+        if (a.getX() - center.getX() < 0 && b.getX() - center.getX() >= 0) {
+            return false;
+        }
+        if (a.getX() - center.getX() == 0 && b.getX() - center.getX() == 0) {
+            if (a.getY() - center.getY() >= 0 || b.getY() - center.getY() >= 0) {
+                return a.getY() > b.getY();
+            }
+            return b.getY() > a.getY();
+        }
+
+        // compute the cross product of vectors (center -> a) x (center -> b)
+        double det = (a.getX() - center.getX()) * (b.getY() - center.getY()) -
+                (b.getX() - center.getX()) * (a.getY() - center.getY());
+        if (det < 0) {
+            return true;
+        }
+        if (det > 0) {
+            return false;
+        }
+
+        // points a and b are on the same line from the center
+        // check which point is closer to the center
+        double d1 = (a.getX() - center.getX()) * (a.getX() - center.getX()) +
+                (a.getY() - center.getY()) * (a.getY() - center.getY());
+        double d2 = (b.getX() - center.getX()) * (b.getX() - center.getX()) +
+                (b.getY() - center.getY()) * (b.getY() - center.getY());
+        return d1 > d2;
+    }
+
+    private boolean isCloser (Point actualPoint, Point closestPoint){
+        double actualPointLenght = (actualPoint.getX()*actualPoint.getX())+(actualPoint.getY()*actualPoint.getY());
+        double closestPointLenght = (closestPoint.getX()*closestPoint.getX())+(closestPoint.getY()*closestPoint.getY());
+        if (actualPointLenght < closestPointLenght){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private ArrayList<Point> switchElements(int position1, int position2, ArrayList<Point> points){
+        Point temp = points.get(position2);
+        points.set(position2, points.get(position1));
+        points.set(position1, temp);
+        return points;
     }
 
     /**
