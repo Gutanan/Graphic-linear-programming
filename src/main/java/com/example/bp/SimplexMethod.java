@@ -107,6 +107,7 @@ public class SimplexMethod {
     }
 
     public void iterateTable() {
+        ERROR error = ERROR.NOT_OPTIMAL;
         if (this.purpose.equals(PURPOSE.MAX)) {
             while (areAllNullNegative(table[rows - 1])) {
                 int enteringVariable = findPositionMin(table[rows - 1]);
@@ -119,6 +120,9 @@ public class SimplexMethod {
                         valuesOfExitingVariable[i] = Double.MAX_VALUE;
                     }
                     //valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                }
+                if(isUnbounded(valuesOfExitingVariable)){
+                    error = ERROR.UNBOUNDED;
                 }
                 int exitingVariable = findPositionMin(valuesOfExitingVariable);
                 double keyElement = table[exitingVariable][enteringVariable];
@@ -142,7 +146,7 @@ public class SimplexMethod {
                     valuesOfExitingVariable = new double[rows - 2];
                     for (int i = 0; i < valuesOfExitingVariable.length; i++) {
                         double value = table[i][cols - 1] / table[i][enteringVariable];
-                        if (value > 0){
+                        if (table[i][enteringVariable] > 0){
                             valuesOfExitingVariable[i] = value;
                         } else {
                             valuesOfExitingVariable[i] = Double.MAX_VALUE;
@@ -153,7 +157,7 @@ public class SimplexMethod {
                     valuesOfExitingVariable = new double[rows - 1];
                     for (int i = 0; i < valuesOfExitingVariable.length; i++) {
                         double value = table[i][cols - 1] / table[i][enteringVariable];
-                        if (value > 0){
+                        if (table[i][enteringVariable] > 0){
                             valuesOfExitingVariable[i] = value;
                         } else {
                             valuesOfExitingVariable[i] = Double.MAX_VALUE;
@@ -176,6 +180,16 @@ public class SimplexMethod {
                 }
             }
         }
+    }
+
+    private boolean isUnbounded(double[] valuesOfExitingVariable) {
+        boolean unbounded = true;
+        for (int i = 0; i < valuesOfExitingVariable.length; i++){
+            if (valuesOfExitingVariable[i] < Double.MAX_VALUE){
+                unbounded = false;
+            }
+        }
+        return unbounded;
     }
 
     public void generateNewTable(int numOfAdditional, int numberOfAuxiliary) {
@@ -201,5 +215,25 @@ public class SimplexMethod {
             this.isTwoPhase = false;
             System.out.println(printString());
         }
+    }
+
+    private ERROR checkSolution(){
+        ERROR error = ERROR.NOT_OPTIMAL;
+        double[] rightSides = new double[rows-2];
+        for (int i = 0; i < rows-2; i++){
+            rightSides[i] = table[i][rows-1];
+        }
+        if (this.purpose.equals(PURPOSE.MAX)){
+            if (areAllNullPositive(table[rows - 1]) && areAllNullPositive(rightSides)){
+                error = ERROR.IS_OPTIMAL;
+            }
+        }
+        if (this.purpose.equals(PURPOSE.MIN)){
+            if (areAllNullNegative(table[rows - 1]) && areAllNullPositive(rightSides)){
+                error = ERROR.IS_OPTIMAL;
+            }
+        }
+        return error;
+
     }
 }

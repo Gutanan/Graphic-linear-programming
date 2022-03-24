@@ -44,7 +44,6 @@ public class LinearLine {
      */
     private void countNullX(double coefX1, double rightSide) {
         double x = rightSide/coefX1;
-        round(x,2);
         this.nullX = new Point(x, 0d);
     }
     /**
@@ -54,7 +53,6 @@ public class LinearLine {
      */
     private void countNullY(double coefX2, double rightSide) {
         double y = rightSide/coefX2;
-        round(y,2);
         this.nullY = new Point(0d,y);
     }
 

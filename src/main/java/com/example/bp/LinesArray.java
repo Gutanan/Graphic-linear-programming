@@ -168,8 +168,8 @@ public class LinesArray {
 
         x = countDeterminantTwobyTwo(detX1) / countDeterminantTwobyTwo(detX2);
         y = countDeterminantTwobyTwo(detY1) / countDeterminantTwobyTwo(detY2);
-        intersection.setX(round(x,2));
-        intersection.setY(round(y,2));
+        intersection.setX(x);
+        intersection.setY(y);
         return intersection;
     }
 
