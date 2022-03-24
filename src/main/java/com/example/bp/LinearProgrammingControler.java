@@ -223,6 +223,7 @@ public class LinearProgrammingControler {
      * When it has exactly one null point in positive part of axis it counts the second point
      * at the end of the graph
      * When both null points are in negative parts the line is only in the inception
+     * When coeficients x or y are 0 it draws a straight line in the graph
      * While counting it figures out whether it ends on the right side or on the upper side of the graph
      * @param linearLine object representation of a contrain
      * @param line javafx Line
@@ -312,6 +313,7 @@ public class LinearProgrammingControler {
 
     }
     /**
+     * Method counts the right side of the PurposeFunction
      * Method sets the ends of a javafx line -> draws the purpose line in the graph
      * @param purposeLine object representation of a purpose line
      * @param line javafx Line
@@ -357,9 +359,9 @@ public class LinearProgrammingControler {
 
     /**
      * Method justify the order of points to draw the polygon the right way
+     * It finds centroid and then sort points
      * @param edges Points that are egdes of polygon
      * @return justified edges
-     * TODO THIS IS NOT OPTIMAL
      */
     private ArrayList<Point> satisfyPoints(ArrayList<Point> edges){
         //Find Centroid of polygon
@@ -369,6 +371,11 @@ public class LinearProgrammingControler {
         return edges;
     }
 
+    /**
+     * Method goes through edges and count the aritmetical average of all edges of both coordinates
+     * @param edges Points that are egdes of polygon
+     * @return Point of centroid
+     */
     private Point findCentroid(ArrayList<Point> edges){
         double x = 0;
         double y = 0;
@@ -379,6 +386,12 @@ public class LinearProgrammingControler {
         return new Point(x/edges.size(), y/edges.size());
     }
 
+    /**
+     * Method goes through edges and sorts them in clockwise order
+     * @param edges Points that are egdes of polygon
+     * @param center Centroid of the polygon
+     * @return
+     */
     private ArrayList<Point> sortPointsClockwise(ArrayList<Point> edges, Point center) {
         boolean changed;
         do {
@@ -395,6 +408,16 @@ public class LinearProgrammingControler {
     }
 
     // http://stackoverflow.com/questions/6989100/sort-points-in-clockwise-order
+
+    /**
+     * Method compares two points and counts if they need to be switched
+     * It does that with confronting point with centroid
+     * @param a Point a
+     * @param b Point b
+     * @param center Centroid
+     * @return true when they need to be switched
+     * @return false when they stay as they are
+     */
     private static boolean comparePoint(Point a, Point b, Point center) {
 
         if (a.getX() - center.getX() >= 0 && b.getX() - center.getX() < 0) {
@@ -429,16 +452,13 @@ public class LinearProgrammingControler {
         return d1 > d2;
     }
 
-    private boolean isCloser (Point actualPoint, Point closestPoint){
-        double actualPointLenght = (actualPoint.getX()*actualPoint.getX())+(actualPoint.getY()*actualPoint.getY());
-        double closestPointLenght = (closestPoint.getX()*closestPoint.getX())+(closestPoint.getY()*closestPoint.getY());
-        if (actualPointLenght < closestPointLenght){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    /**
+     * Method switches two elements in array
+     * @param position1
+     * @param position2
+     * @param points array list of points
+     * @return array list with switched points
+     */
     private ArrayList<Point> switchElements(int position1, int position2, ArrayList<Point> points){
         Point temp = points.get(position2);
         points.set(position2, points.get(position1));
@@ -461,6 +481,9 @@ public class LinearProgrammingControler {
         possibleSolutionsPolygon.setVisible(true);
     }
 
+    /**
+     * Method sets labes with particular scale numbers
+     */
     private void setLabels(){
         double first = (100/zoom);
         double second = (200/zoom);

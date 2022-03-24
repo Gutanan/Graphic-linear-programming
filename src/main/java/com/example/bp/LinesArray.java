@@ -66,9 +66,8 @@ public class LinesArray {
 
     /**
      * Method goes through Basic Solutions points and evaluates, whether they are also Possible Solutions points
-     *
+     * While comparing it rounds the result to 2 decimals to avoid double wrong rounding
      * @return ArrayList of Possible Solutions points
-     * TODO double někdy zaokrouhlí špatně a proto se přípustné základní řešení nevykreslí
      */
     public ArrayList<Point> findPossibleSolutions() {
         ArrayList<Point> basicSolutions = findBasicSolutions();
@@ -108,7 +107,7 @@ public class LinesArray {
      * optimal
      *
      * @param purposeLine is the Purpose line
-     * @return one Point which appears to be optimal accordint to the purpose line
+     * @return one Point which appears to be optimal according to the purpose line
      */
     public Point findOptimalSolution(PurposeLine purposeLine) {
         ArrayList<Point> possibleSolutions = findPossibleSolutions();
@@ -128,7 +127,7 @@ public class LinesArray {
             }
             return possibleSolutions.get(index);
         } else {
-            double min = 10000000;
+            double min = Double.MAX_VALUE;
             double currentmin;
             int index = 0;
             for (int i = 0; i < possibleSolutions.size(); i++) {
@@ -185,6 +184,11 @@ public class LinesArray {
         return determinant;
     }
 
+    /**
+     * First step of creating a simplex matrix
+     * It chooses between standart and 2phase simplex matrix
+     * @return matrix
+     */
     public double[][] createMatrix() {
         boolean isStandart = true;
         for (int i = 0; i < lines.size(); i++) {
@@ -202,7 +206,7 @@ public class LinesArray {
     /**
      * Method takes the constrains and builds a matrix for simplex method when all restrains are type LOWER
      *
-     * @return
+     * @return matrix
      */
     public double[][] createStandartMatrix() {
         int rows = lines.size() + 1;
@@ -228,6 +232,10 @@ public class LinesArray {
         return standartMatrix;
     }
 
+    /**
+     * Method counts the nubmer of auxiliary variables
+     * @return num of auxiliary variables
+     */
     public int getNumOfAuxiliary(){
         int numOfAuxiliary = 0;
         for (int i = 0; i < lines.size(); i++) {
@@ -238,6 +246,10 @@ public class LinesArray {
         return numOfAuxiliary;
     }
 
+    /**
+     * Method counts the number od additional variables
+     * @return the number
+     */
     public int getNumOfAdditional(){
         int numOfAdditional = 0;
         for (int i = 0; i < lines.size(); i++) {
@@ -248,6 +260,11 @@ public class LinesArray {
         return numOfAdditional;
     }
 
+    /**
+     * Method creates simplex matrix when there are restrains GRATER or EQUAL
+     *
+     * @return matrix
+     */
     public double[][] createTwoPhaseMatrix() {
 
         int numOfAdditional = getNumOfAdditional();
@@ -337,7 +354,10 @@ public class LinesArray {
         return standartMatrix;
     }
 
-
+    /**
+     * Prints the simplex table
+     * @param table
+     */
     public void print(double[][] table) {
         for (int i = 0; i < lines.size() + 1; i++) {
             for (int j = 0; j < lines.size() + 3; j++) {
@@ -364,6 +384,12 @@ public class LinesArray {
         return matrix;
     }
 
+    /**
+     * Method does the rounding in double values
+     * @param value double
+     * @param places number of decimal places
+     * @return result
+     */
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 

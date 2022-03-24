@@ -1,5 +1,9 @@
 package com.example.bp;
 
+/**
+ * Method is a representation of a Simplex method
+ * It does the counting and checking result
+ */
 public class SimplexMethod {
 
     private int rows, cols; // row and column
@@ -14,16 +18,12 @@ public class SimplexMethod {
         NOT_OPTIMAL,
         IS_OPTIMAL,
         UNBOUNDED
-    }
-
-    ;
+    };
 
     public static enum PURPOSE {
         MAX,
         MIN
-    }
-
-    ;
+    };
 
     public SimplexMethod(int numOfConstraints, int numOfUnknowns, PURPOSE purpose, boolean isTwoPhase) {
         rows = numOfConstraints + 1; // row number + 1
@@ -31,8 +31,9 @@ public class SimplexMethod {
         this.purpose = purpose;
         table = new double[rows][]; // create a 2d array
         this.isTwoPhase = isTwoPhase;
+        // when twophase it sets the purpose for MIN
         if (isTwoPhase) {
-            actualPurpose = purpose;
+            actualPurpose = purpose; // saves the purpose for later
             this.purpose = PURPOSE.MIN;
         }
 
@@ -42,13 +43,20 @@ public class SimplexMethod {
         }
     }
 
-    // fills the simplex tableau with coefficients
+    /**
+     * Method  fills the simplex table with coefficients
+     * @param data data from example
+     */
     public void fillTable(double[][] data) {
         for (int i = 0; i < table.length; i++) {
             System.arraycopy(data[i], 0, this.table[i], 0, data[i].length);
         }
     }
 
+    /**
+     * Creates string that represents the current table
+     * @return String
+     */
     public String printString() {
         String tableau = "";
         for (int i = 0; i < rows; i++) {
@@ -62,6 +70,11 @@ public class SimplexMethod {
         return tableau;
     }
 
+    /**
+     * Method finds the position of max value double in vector
+     * @param vector
+     * @return int position
+     */
     private int findPositionMax(double[] vector) {
         int position = 0;
         double maxValue = vector[0];
@@ -74,6 +87,11 @@ public class SimplexMethod {
         return position;
     }
 
+    /**
+     * Method finds the position of min value double in vector
+     * @param vector
+     * @return int position
+     */
     private int findPositionMin(double[] vector) {
         int position = 0;
         double minValue = vector[0];
@@ -86,6 +104,12 @@ public class SimplexMethod {
         return position;
     }
 
+    /**
+     * Method evaluates whether all values are zero or negative in vector
+     * @param vector
+     * @return true if are
+     * @return false if are not
+     */
     private boolean areAllNullNegative(double[] vector) {
         boolean outcome = false;
         for (int i = 0; i < vector.length; i++) {
@@ -96,6 +120,12 @@ public class SimplexMethod {
         return outcome;
     }
 
+    /**
+     * Method evaluates whether all values are zero or positive in vector
+     * @param vector
+     * @return true if are
+     * @return false if are not
+     */
     private boolean areAllNullPositive(double[] vector) {
         boolean outcome = false;
         for (int i = 0; i < vector.length; i++) {
@@ -182,6 +212,12 @@ public class SimplexMethod {
         }
     }
 
+    /**
+     * Method evaluates whether the solution is unbounded from vector of values of exiting variable
+     * @param valuesOfExitingVariable
+     * @return true if is unbounded
+     * @return false if is not
+     */
     private boolean isUnbounded(double[] valuesOfExitingVariable) {
         boolean unbounded = true;
         for (int i = 0; i < valuesOfExitingVariable.length; i++){
@@ -192,6 +228,13 @@ public class SimplexMethod {
         return unbounded;
     }
 
+    /**
+     * In case of 2phase it generates after the 1st phase a table for 2nd phase
+     * It avoids the auxiliary columns and row
+     * It also prepares the parameters for 2nd phase
+     * @param numOfAdditional
+     * @param numberOfAuxiliary
+     */
     public void generateNewTable(int numOfAdditional, int numberOfAuxiliary) {
         if (isTwoPhase) {
             double newTableRows[][] = new double[rows - 1][cols];

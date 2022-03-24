@@ -39,6 +39,7 @@ public class LinearLine {
 
     /**
      * Method counts the intersections with X axis
+     * When the X1 is 0 the intersection is in infinity
      * @param coefX1 from Line
      * @param rightSide from Line
      */
@@ -48,6 +49,7 @@ public class LinearLine {
     }
     /**
      * Method counts the intersections with Y axis
+     * When the X2 is 0 the intersection is in infinity
      * @param coefX2 from Line
      * @param rightSide from Line
      */
