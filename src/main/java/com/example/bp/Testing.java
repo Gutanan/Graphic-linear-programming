@@ -11,8 +11,10 @@ public class Testing {
         //LinearLine line1 = new LinearLine(1,1,4, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(-2,3,0, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(4,3,12, LinearLine.RESTRAIN.EQUAL);
-        LinearLine line1 = new LinearLine(7,3,4, LinearLine.RESTRAIN.GREATER);
+        LinearLine line1 = new LinearLine(7,3,14, LinearLine.RESTRAIN.GREATER);
         LinearLine line2 = new LinearLine(1,0,6, LinearLine.RESTRAIN.LOWER);
+        LinearLine line3 = new LinearLine(0,1,4, LinearLine.RESTRAIN.LOWER);
+        LinearLine line4 = new LinearLine(1,2,5, LinearLine.RESTRAIN.EQUAL);
 
 
         PurposeLine purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, 3, 5);
@@ -20,7 +22,8 @@ public class Testing {
         LinesArray lines = new LinesArray();
         lines.addLine(line1);
         lines.addLine(line2);
-        //lines.addLine(line3);
+        lines.addLine(line3);
+        lines.addLine(line4);
 
         System.out.println("Základní řešení");
         System.out.println(lines.findBasicSolutions());

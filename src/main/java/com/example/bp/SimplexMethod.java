@@ -140,16 +140,30 @@ public class SimplexMethod {
         ERROR error = ERROR.NOT_OPTIMAL;
         if (this.purpose.equals(PURPOSE.MAX)) {
             while (areAllNullNegative(table[rows - 1])) {
-                int enteringVariable = findPositionMin(table[rows - 1]);
+                int enteringVariable = findPositionMin(avoidLastElement(table[rows - 1]));
                 double[] valuesOfExitingVariable = new double[rows - 1];
-                for (int i = 0; i < valuesOfExitingVariable.length; i++) {
-                    double value = table[i][cols - 1] / table[i][enteringVariable];
-                    if (table[i][enteringVariable] > 0){
-                        valuesOfExitingVariable[i] = value;
-                    } else {
-                        valuesOfExitingVariable[i] = Double.MAX_VALUE;
-                    }
-                    //valuesOfExitingVariable[i] = table[i][cols - 1] / table[i][enteringVariable];
+                setValuesOfExitingVariableVector(valuesOfExitingVariable,enteringVariable);
+                if(isUnbounded(valuesOfExitingVariable)){
+                    error = ERROR.UNBOUNDED;
+                }
+                int exitingVariable = findPositionMin(valuesOfExitingVariable);
+                double keyElement = table[exitingVariable][enteringVariable];
+                for (int i = 0; i < cols; i++) {
+                    table[exitingVariable][i] /= keyElement;
+                }
+                calculateOtherRows(enteringVariable,exitingVariable);
+                error = checkSolution();
+            }
+        } else {
+            while (areAllNullPositive(table[rows - 1])) {
+                int enteringVariable = findPositionMax(avoidLastElement(table[rows - 1]));
+                double[] valuesOfExitingVariable;
+                if (isTwoPhase) {
+                    valuesOfExitingVariable = new double[rows - 2];
+                    setValuesOfExitingVariableVector(valuesOfExitingVariable,enteringVariable);
+                } else {
+                    valuesOfExitingVariable = new double[rows - 1];
+                    setValuesOfExitingVariableVector(valuesOfExitingVariable,enteringVariable);
                 }
                 if(isUnbounded(valuesOfExitingVariable)){
                     error = ERROR.UNBOUNDED;
@@ -159,55 +173,40 @@ public class SimplexMethod {
                 for (int i = 0; i < cols; i++) {
                     table[exitingVariable][i] /= keyElement;
                 }
-                for (int i = 0; i < rows; i++) {
-                    if (i != exitingVariable) {
-                        double multiplier = -table[i][enteringVariable] / table[exitingVariable][enteringVariable];
-                        for (int j = 0; j < cols; j++) {
-                            table[i][j] += table[exitingVariable][j] * multiplier;
-                        }
-                    }
+                calculateOtherRows(enteringVariable,exitingVariable);
+                error = checkSolution();
+            }
+        }
+    }
+
+    /**
+     * Method calculates other rows in order to make unit vector on entering variable
+     * @param enteringVariable
+     * @param exitingVariable
+     */
+    private void calculateOtherRows(int enteringVariable, int exitingVariable){
+        for (int i = 0; i < rows; i++) {
+            if (i != exitingVariable) {
+                double multiplier = -table[i][enteringVariable] / table[exitingVariable][enteringVariable];
+                for (int j = 0; j < cols; j++) {
+                    table[i][j] += table[exitingVariable][j] * multiplier;
                 }
             }
-        } else {
-            while (areAllNullPositive(table[rows - 1])) {
-                int enteringVariable = findPositionMax(table[rows - 1]);
-                double[] valuesOfExitingVariable;
-                if (isTwoPhase) {
-                    valuesOfExitingVariable = new double[rows - 2];
-                    for (int i = 0; i < valuesOfExitingVariable.length; i++) {
-                        double value = table[i][cols - 1] / table[i][enteringVariable];
-                        if (table[i][enteringVariable] > 0){
-                            valuesOfExitingVariable[i] = value;
-                        } else {
-                            valuesOfExitingVariable[i] = Double.MAX_VALUE;
-                        }
+        }
+    }
 
-                    }
-                } else {
-                    valuesOfExitingVariable = new double[rows - 1];
-                    for (int i = 0; i < valuesOfExitingVariable.length; i++) {
-                        double value = table[i][cols - 1] / table[i][enteringVariable];
-                        if (table[i][enteringVariable] > 0){
-                            valuesOfExitingVariable[i] = value;
-                        } else {
-                            valuesOfExitingVariable[i] = Double.MAX_VALUE;
-                        }
-
-                    }
-                }
-                int exitingVariable = findPositionMax(valuesOfExitingVariable);
-                double keyElement = table[exitingVariable][enteringVariable];
-                for (int i = 0; i < cols; i++) {
-                    table[exitingVariable][i] /= keyElement;
-                }
-                for (int i = 0; i < rows; i++) {
-                    if (i != exitingVariable) {
-                        double multiplier = -table[i][enteringVariable] / table[exitingVariable][enteringVariable];
-                        for (int j = 0; j < cols; j++) {
-                            table[i][j] += table[exitingVariable][j] * multiplier;
-                        }
-                    }
-                }
+    /**
+     * Method calculates the values of exiting variables and puts them in the vector
+     * @param valuesOfExitingVariable
+     * @param enteringVariable
+     */
+    private void setValuesOfExitingVariableVector(double[] valuesOfExitingVariable, int enteringVariable){
+        for (int i = 0; i < valuesOfExitingVariable.length; i++) {
+            double value = table[i][cols - 1] / table[i][enteringVariable];
+            if (table[i][enteringVariable] > 0){
+                valuesOfExitingVariable[i] = value;
+            } else {
+                valuesOfExitingVariable[i] = Double.MAX_VALUE;
             }
         }
     }
@@ -226,6 +225,14 @@ public class SimplexMethod {
             }
         }
         return unbounded;
+    }
+
+    private double[] avoidLastElement(double[] vector){
+        double[] result = new double[vector.length-1];
+        for (int i = 0; i < result.length; i++){
+            result[i] = vector[i];
+        }
+        return result;
     }
 
     /**
@@ -262,17 +269,17 @@ public class SimplexMethod {
 
     private ERROR checkSolution(){
         ERROR error = ERROR.NOT_OPTIMAL;
-        double[] rightSides = new double[rows-2];
-        for (int i = 0; i < rows-2; i++){
-            rightSides[i] = table[i][rows-1];
+        double[] rightSides = new double[rows-1];
+        for (int i = 0; i < rows-1; i++){
+            rightSides[i] = table[i][cols-1];
         }
         if (this.purpose.equals(PURPOSE.MAX)){
-            if (areAllNullPositive(table[rows - 1]) && areAllNullPositive(rightSides)){
+            if (!areAllNullNegative(table[rows - 1]) && areAllNullPositive(rightSides)){
                 error = ERROR.IS_OPTIMAL;
             }
         }
         if (this.purpose.equals(PURPOSE.MIN)){
-            if (areAllNullNegative(table[rows - 1]) && areAllNullPositive(rightSides)){
+            if (!areAllNullPositive(table[rows - 1]) && areAllNullPositive(rightSides)){
                 error = ERROR.IS_OPTIMAL;
             }
         }
