@@ -20,6 +20,10 @@ public class LinearLine {
         countNullY(coefX2,rightSide);
     }
 
+    public void setRestrain(RESTRAIN restrain) {
+        this.restrain = restrain;
+    }
+
     /**
      * Restrain can be GREATER or LOWER or EQUAL value
      */

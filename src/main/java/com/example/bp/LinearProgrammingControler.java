@@ -10,6 +10,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +24,7 @@ public class LinearProgrammingControler {
     private final String lineMiner = "([+-]? ?\\d+) ?[xX]1? ?([+-]? ?\\d+) ?[xXyY]2? ?([<>]?=) ?([+-]? ?\\d+)";
     private final String purposeMiner = "(max|MAX|min|MIN) ?= ?([+-]? ?\\d+)[xX]1? ?([+-]? ?\\d+)[xXyY]2?";
     private double zoom = 50d;
+    private boolean firstCount = true;
     private int numOfConstrains = 2;
 
     /**
@@ -30,17 +33,28 @@ public class LinearProgrammingControler {
      */
     @FXML
     protected void count() {
-        setLabels();
         output.clear();
         LinesArray lines = new LinesArray();
         for (int i = 2; i < numOfConstrains+2; i++){
             TextField tf = (TextField) constrains.getChildren().get(i-1);
             String lineText = tf.getText();
             LinearLine ln = mineLine(lineText, lineMiner);
-            Line line = (Line) graph.getChildren().get(i);
-            drawLine(ln, line);
-            line.setVisible(true);
+            //Line line = (Line) graph.getChildren().get(i);
+            //drawLine(ln, line);
+            //line.setVisible(true);
             lines.addLine(ln);
+        }
+
+        if (firstCount){
+            adjustZoom(lines);
+            firstCount = false;
+        }
+        setLabels();
+
+        for (int i = 0; i < lines.getLines().size(); i++){
+            Line line = (Line) graph.getChildren().get(i+2);
+            drawLine(lines.getLines().get(i), line);
+            line.setVisible(true);
         }
 
         String purposeText = purposeLine.getText();
@@ -57,6 +71,8 @@ public class LinearProgrammingControler {
         output.appendText("\n");
 
         drawShapes(purpose,lines);
+        //Simplex method
+        lines.doRightPositive();
 
     }
 
@@ -336,11 +352,15 @@ public class LinearProgrammingControler {
     }
 
     /**
+     * First the method adds lines of the graph border in case of unbounded solution or zoom
      * Method takes the Possible solutions and draws the polygon with them in the graph
-     * @param lines of the constrains
+     * @param drawingPolygon ary lines of the constrains
      * @param polygon javafx polygon
      */
-    private void drawPolygon(LinesArray lines, Polygon polygon) {
+    private void drawPolygon(LinesArray drawingPolygon, Polygon polygon) {
+        LinesArray lines = drawingPolygon;
+        lines.addLine(new LinearLine(0,1,450/zoom, LinearLine.RESTRAIN.LOWER));
+        lines.addLine(new LinearLine(1,0,450/zoom, LinearLine.RESTRAIN.LOWER));
         int numberOfPoints = lines.findPossibleSolutions().size();
         ArrayList<Point> possiblePoints = lines.findPossibleSolutions();
         possiblePoints = satisfyPoints(possiblePoints);
@@ -355,6 +375,10 @@ public class LinearProgrammingControler {
             polygon.getPoints().addAll(points);
             polygon.setSmooth(true);
         }
+    }
+
+    private void tryEdgesOfGraph(LinesArray lines){
+
     }
 
     /**
@@ -479,6 +503,41 @@ public class LinearProgrammingControler {
         purpLine.setVisible(true);
         optimalCircle.setVisible(true);
         possibleSolutionsPolygon.setVisible(true);
+    }
+
+    private void adjustZoom(LinesArray lines) {
+        ArrayList<Point> possiblePoints = lines.findPossibleSolutions();
+        double zoomround;
+        double maxX = findMaxX(possiblePoints);
+        double maxY = findMaxY(possiblePoints);
+        if (maxX > maxY){
+            zoomround = 450/(maxX + maxX/10);
+        } else {
+            zoomround = 450/(maxY + maxY/10);
+        }
+        BigDecimal bd = new BigDecimal(zoomround);
+        bd = bd.round(new MathContext(1));
+        zoom = bd.doubleValue();
+    }
+
+    private double findMaxX(ArrayList<Point> possiblePoints) {
+        double maxValue = 0;
+        for (int i = 0; i < possiblePoints.size(); i++){
+            if (possiblePoints.get(i).getX() > maxValue){
+                maxValue = possiblePoints.get(i).getX();
+            }
+        }
+        return maxValue;
+    }
+
+    private double findMaxY(ArrayList<Point> possiblePoints) {
+        double maxValue = 0;
+        for (int i = 0; i < possiblePoints.size(); i++){
+            if (possiblePoints.get(i).getY() > maxValue){
+                maxValue = possiblePoints.get(i).getY();
+            }
+        }
+        return maxValue;
     }
 
     /**

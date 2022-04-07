@@ -1,17 +1,21 @@
 package com.example.bp;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 /**
  * Method for testing purposes
  */
 public class Testing {
     public static void main(String[] args) {
+
         //LinearLine line1 = new LinearLine(2,1,2, LinearLine.RESTRAIN.GREATER);
         //LinearLine line2 = new LinearLine(4,2,8, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(5,2,5, LinearLine.RESTRAIN.EQUAL);
         //LinearLine line1 = new LinearLine(1,1,4, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(-2,3,0, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(4,3,12, LinearLine.RESTRAIN.EQUAL);
-        LinearLine line1 = new LinearLine(7,3,14, LinearLine.RESTRAIN.GREATER);
+        LinearLine line1 = new LinearLine(7,3,-14, LinearLine.RESTRAIN.GREATER);
         LinearLine line2 = new LinearLine(1,0,6, LinearLine.RESTRAIN.LOWER);
         LinearLine line3 = new LinearLine(0,1,4, LinearLine.RESTRAIN.LOWER);
         LinearLine line4 = new LinearLine(1,2,5, LinearLine.RESTRAIN.EQUAL);
@@ -31,6 +35,8 @@ public class Testing {
         System.out.println(lines.findPossibleSolutions());
         System.out.println("Optimální řešení");
         System.out.println(lines.findOptimalSolution(purposeLine));
+        // simplex start
+        lines.doRightPositive();
 
         boolean quit = false;
 

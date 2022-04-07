@@ -399,5 +399,24 @@ public class LinesArray {
         return (double) tmp / factor;
     }
 
+    /**
+     * Method changes all restrains, that have their right side negative.
+     * It multiplies all number of the line by -1 and if necessary changes the restrain type
+     */
+    public void doRightPositive(){
+        for (int i = 0; i < lines.size(); i++){
+            if (lines.get(i).getRightSide() < 0){
+                lines.get(i).setRightSide(lines.get(i).getRightSide() * (-1));
+                lines.get(i).setCoefX1(lines.get(i).getCoefX1() * (-1));
+                lines.get(i).setCoefX2(lines.get(i).getCoefX2() * (-1));
+                if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.LOWER)){
+                    lines.get(i).setRestrain(LinearLine.RESTRAIN.GREATER);
+                } else if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.GREATER)){
+                    lines.get(i).setRestrain(LinearLine.RESTRAIN.LOWER);
+                }
+            }
+        }
+    }
+
 
 }
