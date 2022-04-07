@@ -24,7 +24,7 @@ public class LinearProgrammingControler {
     private final String lineMiner = "([+-]? ?\\d+) ?[xX]1? ?([+-]? ?\\d+) ?[xXyY]2? ?([<>]?=) ?([+-]? ?\\d+)";
     private final String purposeMiner = "(max|MAX|min|MIN) ?= ?([+-]? ?\\d+)[xX]1? ?([+-]? ?\\d+)[xXyY]2?";
     private double zoom = 50d;
-    private boolean firstCount = true;
+    private boolean doAdjustZoom = true;
     private int numOfConstrains = 2;
 
     /**
@@ -33,6 +33,11 @@ public class LinearProgrammingControler {
      */
     @FXML
     protected void count() {
+        doAdjustZoom = true;
+        drawAndCount();
+    }
+
+    private void drawAndCount(){
         output.clear();
         LinesArray lines = new LinesArray();
         for (int i = 2; i < numOfConstrains+2; i++){
@@ -45,9 +50,9 @@ public class LinearProgrammingControler {
             lines.addLine(ln);
         }
 
-        if (firstCount){
+        if (doAdjustZoom){
             adjustZoom(lines);
-            firstCount = false;
+            doAdjustZoom = false;
         }
         setLabels();
 
@@ -125,13 +130,13 @@ public class LinearProgrammingControler {
     @FXML
     protected void zoomPlus(){
         zoom = zoom * 2;
-        count();
+        drawAndCount();
     }
 
     @FXML
     protected void zoomMinus(){
         zoom = zoom / 2;
-        count();
+        drawAndCount();
     }
 
     @FXML

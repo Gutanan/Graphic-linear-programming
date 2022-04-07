@@ -12,6 +12,7 @@ public class SimplexMethod {
     private PURPOSE purpose;
     private PURPOSE actualPurpose;
     private boolean isTwoPhase;
+    private ERROR resultError = ERROR.IS_OPTIMAL;
 
 
     public static enum ERROR {
@@ -139,12 +140,14 @@ public class SimplexMethod {
     public void iterateTable() {
         ERROR error = ERROR.NOT_OPTIMAL;
         if (this.purpose.equals(PURPOSE.MAX)) {
-            while (areAllNullNegative(table[rows - 1])) {
+            while (error.equals(ERROR.NOT_OPTIMAL)) {
                 int enteringVariable = findPositionMin(avoidLastElement(table[rows - 1]));
                 double[] valuesOfExitingVariable = new double[rows - 1];
                 setValuesOfExitingVariableVector(valuesOfExitingVariable,enteringVariable);
                 if(isUnbounded(valuesOfExitingVariable)){
                     error = ERROR.UNBOUNDED;
+                    resultError = error;
+                    break;
                 }
                 int exitingVariable = findPositionMin(valuesOfExitingVariable);
                 double keyElement = table[exitingVariable][enteringVariable];
@@ -155,7 +158,7 @@ public class SimplexMethod {
                 error = checkSolution();
             }
         } else {
-            while (areAllNullPositive(table[rows - 1])) {
+            while (error.equals(ERROR.NOT_OPTIMAL)) {
                 int enteringVariable = findPositionMax(avoidLastElement(table[rows - 1]));
                 double[] valuesOfExitingVariable;
                 if (isTwoPhase) {
@@ -167,6 +170,8 @@ public class SimplexMethod {
                 }
                 if(isUnbounded(valuesOfExitingVariable)){
                     error = ERROR.UNBOUNDED;
+                    resultError = error;
+                    break;
                 }
                 int exitingVariable = findPositionMin(valuesOfExitingVariable);
                 double keyElement = table[exitingVariable][enteringVariable];
@@ -177,6 +182,7 @@ public class SimplexMethod {
                 error = checkSolution();
             }
         }
+        System.out.println(resultError.toString());
     }
 
     /**
