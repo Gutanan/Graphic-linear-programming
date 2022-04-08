@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
  */
 public class LinearProgrammingControler {
 
-    private final String lineMiner = "([+-]? ?\\d+) ?[xX]1? ?([+-]? ?\\d+) ?[xXyY]2? ?([<>]?=) ?([+-]? ?\\d+)";
-    private final String purposeMiner = "(max|MAX|min|MIN) ?= ?([+-]? ?\\d+)[xX]1? ?([+-]? ?\\d+)[xXyY]2?";
+    private final String lineMiner = "([+-]? ?\\d*.?\\d+) ?[xX]1? ?([+-]? ?\\d*.?\\d+) ?[xXyY]2? ?([<>]?=) ?([+-]? ?\\d*.?\\d+)";
+    private final String purposeMiner = "(max|MAX|min|MIN) ?= ?([+-]? ?\\d*.?\\d+)[xX]1? ?([+-]? ?\\d*.?\\d+)[xXyY]2?";
     private double zoom = 50d;
     private boolean doAdjustZoom = true;
     private int numOfConstrains = 2;
@@ -209,7 +209,7 @@ public class LinearProgrammingControler {
         } else {
             restrain = LinearLine.RESTRAIN.EQUAL;
         }
-        result = new LinearLine(Integer.parseInt(coefs[0]),Integer.parseInt(coefs[1]),Integer.parseInt(coefs[3]), restrain);
+        result = new LinearLine(Double.parseDouble(coefs[0]),Double.parseDouble(coefs[1]),Double.parseDouble(coefs[3]), restrain);
         return result;
     }
 
@@ -230,9 +230,9 @@ public class LinearProgrammingControler {
             result[2] = matcher.group(3).replaceAll("\\s", "");
         }
         if (result[0].equalsIgnoreCase("max")){
-            purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, Integer.parseInt(result[1]), Integer.parseInt(result[2]));
+            purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, Double.parseDouble(result[1]), Double.parseDouble(result[2]));
         } else {
-            purposeLine = new PurposeLine(PurposeLine.PURPOSE.MIN, Integer.parseInt(result[1]), Integer.parseInt(result[2]));
+            purposeLine = new PurposeLine(PurposeLine.PURPOSE.MIN, Double.parseDouble(result[1]), Double.parseDouble(result[2]));
         }
         return purposeLine;
     }
