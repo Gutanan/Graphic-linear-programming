@@ -26,6 +26,13 @@ public class SimplexMethod {
         MIN
     };
 
+    /**
+     * Simplex table constructor with setting the parameters
+     * @param numOfConstraints
+     * @param numOfUnknowns
+     * @param purpose
+     * @param isTwoPhase
+     */
     public SimplexMethod(int numOfConstraints, int numOfUnknowns, PURPOSE purpose, boolean isTwoPhase) {
         rows = numOfConstraints + 1; // row number + 1
         cols = numOfUnknowns + 1;   // column number + 1
@@ -137,6 +144,13 @@ public class SimplexMethod {
         return outcome;
     }
 
+    /**
+     * Method follows the steps in simplex method
+     * 1. test of optimality
+     * 2. finding of the key element with entering and exiting variable
+     * 3. recalculation of the table
+     * 4. test of optimality
+     */
     public void iterateTable() {
         ERROR error = ERROR.NOT_OPTIMAL;
         if (this.purpose.equals(PURPOSE.MAX)) {
@@ -185,6 +199,18 @@ public class SimplexMethod {
         System.out.println(resultError.toString());
     }
 
+    /**
+     * Method returns string of the Solution price from simplex table
+     * @return
+     */
+    public String returnSolutionPrice(){
+        return "z = (" + String.format("%.2f", table[rows-1][cols-1]) + ")";
+    }
+
+    /**
+     * Method takes the simplex table and counts the solution vector
+     * @return String in LP form
+     */
     public String returnSolutionVector(){
         String result = "x = (";
         String[] vector = new String[cols-1];
@@ -192,7 +218,7 @@ public class SimplexMethod {
             vector[i] = "0,00";
         }
         for (int i = 0; i < table.length; i++){
-            for (int j = 0; j < table.length; j++){
+            for (int j = 0; j < table[0].length-1; j++){
                 if (table[i][j] == 1d && colIsUnitVector(i,j)){
                     vector[j] = String.format("%.2f", table[i][cols-1]);
                 }
@@ -200,11 +226,15 @@ public class SimplexMethod {
         }
         result += buildVector(vector);
         result = result.substring(0, result.length() - 2);
-        result += ") \n";
-        result += "z = (" + String.format("%.2f", table[rows-1][cols-1]) + ")";
+        result += ")";
         return result;
     }
 
+    /**
+     * Method changes the array into one string
+     * @param vector array of strings
+     * @return one string in LP form
+     */
     private String buildVector(String[] vector) {
         String outcome = "";
         for (int i = 0; i < vector.length; i++){
@@ -213,6 +243,12 @@ public class SimplexMethod {
         return outcome;
     }
 
+    /**
+     * Method checks whether is the elements (i,j) column an unit vector
+     * @param i position in table
+     * @param j position in table
+     * @return true if it is unit vector
+     */
     private boolean colIsUnitVector(int i, int j) {
         boolean isUnit = true;
         for (int k = 0; k < table.length; k++){
@@ -271,6 +307,11 @@ public class SimplexMethod {
         return unbounded;
     }
 
+    /**
+     * Method returns vector without last element in array
+     * @param vector
+     * @return
+     */
     private double[] avoidLastElement(double[] vector){
         double[] result = new double[vector.length-1];
         for (int i = 0; i < result.length; i++){
@@ -311,6 +352,11 @@ public class SimplexMethod {
         }
     }
 
+    /**
+     * Method returns the ERROR wheter is the current table optiomal or not
+     * It works on LP basic rules covered in the thesis
+     * @return
+     */
     private ERROR checkSolution(){
         ERROR error = ERROR.NOT_OPTIMAL;
         double[] rightSides = new double[rows-1];

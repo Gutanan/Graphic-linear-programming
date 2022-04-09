@@ -64,8 +64,12 @@ public class Testing {
             System.out.println(simplex.printString());
         }
         System.out.println(simplex.returnSolutionVector());
-
-
+        double a = 0d;
+        for (int i = 1; i < 101; i++){
+            a += 1;
+            double d = 100d/i;
+            System.out.println(a + "   " + d);
+        }
 
 
         /*Simplex simplex = new Simplex(2, 4);

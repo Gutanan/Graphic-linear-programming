@@ -44,9 +44,6 @@ public class LinearProgrammingControler {
             TextField tf = (TextField) constrains.getChildren().get(i-1);
             String lineText = tf.getText();
             LinearLine ln = mineLine(lineText, lineMiner);
-            //Line line = (Line) graph.getChildren().get(i);
-            //drawLine(ln, line);
-            //line.setVisible(true);
             lines.addLine(ln);
         }
 
@@ -65,12 +62,6 @@ public class LinearProgrammingControler {
         String purposeText = purposeLine.getText();
         PurposeLine purpose = minePurposeLine(purposeText, purposeMiner);
 
-        output.appendText("Základní řešení: \n");
-        output.appendText(lines.findBasicSolutions().toString());
-        output.appendText("\n");
-        output.appendText("Přípustná základní řešení: \n");
-        output.appendText(lines.findPossibleSolutions().toString());
-        output.appendText("\n");
         output.appendText("Optimální řešení: \n");
         output.appendText(lines.findOptimalSolution(purpose).toString());
         output.appendText("\n");
@@ -78,6 +69,30 @@ public class LinearProgrammingControler {
         drawShapes(purpose,lines);
         //Simplex method
         lines.doRightPositive();
+        int numOfAuxiliary = lines.getNumOfAuxiliary();
+        int numOfAdditional = lines.getNumOfAdditional();
+        int twoPhase = 0;
+        boolean isTwoPhase = false;
+        if (numOfAuxiliary > 0){
+            twoPhase = 1;
+            isTwoPhase = true;
+        }
+
+        SimplexMethod simplex = new SimplexMethod(lines.getLines().size()+twoPhase,2+numOfAdditional+numOfAuxiliary, SimplexMethod.PURPOSE.MAX, isTwoPhase);
+
+        double[][] standartMatrix = lines.createMatrix();
+        double[] purpLine = purpose.createVector(3+numOfAdditional+numOfAuxiliary);
+        simplex.fillTable(lines.addPurposeVector(standartMatrix,purpLine));
+
+        simplex.iterateTable();
+        if (isTwoPhase){
+            simplex.generateNewTable(numOfAdditional,numOfAuxiliary);
+            simplex.iterateTable();
+        }
+        output.appendText("Simplexová tabulka: \n");
+        output.appendText(simplex.printString());
+        optimalLabel.setText(simplex.returnSolutionVector());
+        purposePriceLabel.setText(simplex.returnSolutionPrice());
 
     }
 
@@ -184,6 +199,12 @@ public class LinearProgrammingControler {
     @FXML
     private Label labely4;
 
+    @FXML
+    private Label optimalLabel;
+
+    @FXML
+    private Label purposePriceLabel;
+
     /**
      * Method takes the input and with regex finds constrain coeficients
      * @param line input
@@ -225,9 +246,9 @@ public class LinearProgrammingControler {
         Matcher matcher = pattern.matcher(line);
         String[] result = new String[3];
         while (matcher.find()) {
-            result[0] = matcher.group(1).replaceAll("\\s", "");
-            result[1] = matcher.group(2).replaceAll("\\s", "");
-            result[2] = matcher.group(3).replaceAll("\\s", "");
+            result[0] = matcher.group(1).replaceAll("\\s", ""); //purpose
+            result[1] = matcher.group(2).replaceAll("\\s", ""); //x1
+            result[2] = matcher.group(3).replaceAll("\\s", ""); //x2
         }
         if (result[0].equalsIgnoreCase("max")){
             purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, Double.parseDouble(result[1]), Double.parseDouble(result[2]));
@@ -380,11 +401,10 @@ public class LinearProgrammingControler {
             polygon.getPoints().addAll(points);
             polygon.setSmooth(true);
         }
+        lines.getLines().remove(lines.getLines().size()-1);
+        lines.getLines().remove(lines.getLines().size()-1);
     }
 
-    private void tryEdgesOfGraph(LinesArray lines){
-
-    }
 
     /**
      * Method justify the order of points to draw the polygon the right way
@@ -401,7 +421,7 @@ public class LinearProgrammingControler {
     }
 
     /**
-     * Method goes through edges and count the aritmetical average of all edges of both coordinates
+     * Method goes through edges and count the arithmetical average of all edges of both coordinates
      * @param edges Points that are egdes of polygon
      * @return Point of centroid
      */
@@ -510,21 +530,68 @@ public class LinearProgrammingControler {
         possibleSolutionsPolygon.setVisible(true);
     }
 
+    /**
+     * Method takes the possible solutions and finds the one with max x and max y
+     * The higher number is the base for zoom recalculation
+     * @param lines
+     */
     private void adjustZoom(LinesArray lines) {
         ArrayList<Point> possiblePoints = lines.findPossibleSolutions();
-        double zoomround;
+        double zoomRound;
         double maxX = findMaxX(possiblePoints);
         double maxY = findMaxY(possiblePoints);
         if (maxX > maxY){
-            zoomround = 450/(maxX + maxX/10);
+            zoomRound = 450/(maxX + maxX/10);
         } else {
-            zoomround = 450/(maxY + maxY/10);
+            zoomRound = 450/(maxY + maxY/10);
         }
-        BigDecimal bd = new BigDecimal(zoomround);
+        BigDecimal bd = new BigDecimal(zoomRound);
         bd = bd.round(new MathContext(1));
-        zoom = bd.doubleValue();
+        double zoomJustified = justifyZoom(bd.doubleValue());
+        zoom = zoomJustified;
     }
 
+    /**
+     * Method takes the zoom number and tries to change it that it can set labels correctly
+     * @param doubleValue
+     * @return
+     */
+    private double justifyZoom(double doubleValue) {
+        double result;
+        if (doubleValue >= 100){
+            int i = (int) doubleValue;
+            i = (i / 100 ) * 100;
+            result = (double) i;
+        } else if (doubleValue < 100 && doubleValue >= 80){
+            result = 80d;
+        } else if (doubleValue < 80 && doubleValue >= 64){
+            result = 64d;
+        } else if (doubleValue < 64 && doubleValue >= 50){
+            result = 50d;
+        } else if (doubleValue < 50 && doubleValue >= 40){
+            result = 40d;
+        } else if (doubleValue < 40 && doubleValue >= 32){
+            result = 32d;
+        } else if (doubleValue < 32 && doubleValue >= 20){
+            result = 20d;
+        } else if (doubleValue < 20 && doubleValue >= 16){
+            result = 16d;
+        } else if (doubleValue < 16 && doubleValue >= 10){
+            result = 10d;
+        } else if (doubleValue < 10 && doubleValue >= 5){
+            result = 5d;
+        } else if (doubleValue==3){
+            result = 2d;
+        } else {
+            result = doubleValue;
+        }
+        return result;
+    }
+
+    /**
+     * @param possiblePoints
+     * @return value the has the maximum X
+     */
     private double findMaxX(ArrayList<Point> possiblePoints) {
         double maxValue = 0;
         for (int i = 0; i < possiblePoints.size(); i++){
@@ -535,6 +602,10 @@ public class LinearProgrammingControler {
         return maxValue;
     }
 
+    /**
+     * @param possiblePoints
+     * @return value of a maximum Y
+     */
     private double findMaxY(ArrayList<Point> possiblePoints) {
         double maxValue = 0;
         for (int i = 0; i < possiblePoints.size(); i++){
@@ -546,7 +617,7 @@ public class LinearProgrammingControler {
     }
 
     /**
-     * Method sets labes with particular scale numbers
+     * Method sets labels with particular scale numbers
      */
     private void setLabels(){
         double first = (100/zoom);
