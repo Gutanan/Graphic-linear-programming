@@ -67,7 +67,7 @@
                   <Line fx:id="line10" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
                   <Circle fx:id="optimalCircle" centerX="100.0" centerY="-200.0" fill="#ff1f1f" layoutX="30.0" layoutY="470.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
                   <Line fx:id="purpLine" endX="150.0" fill="RED" layoutX="30.0" layoutY="470.0" startY="-100.0" stroke="RED" visible="false" />
-                  <Polygon fx:id="possibleSolutionsPolygon" fill="LIME" layoutX="30.0" layoutY="470.0" opacity="0.3" points="100, -100, 250, -100, 177, -200" stroke="BLACK" strokeType="INSIDE" visible="false" />
+                  <Polygon fx:id="possibleSolutionsPolygon" fill="LIME" layoutX="30.0" layoutY="470.0" opacity="0.3" points="100, -100, 250, -100, 177, -200" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
                   <Button layoutX="404.0" layoutY="20.0" mnemonicParsing="false" onAction="#zoomPlus" prefHeight="35.0" prefWidth="35.0" text="+" />
                   <Button layoutX="439.0" layoutY="20.0" mnemonicParsing="false" onAction="#zoomMinus" prefHeight="35.0" prefWidth="35.0" text="-" />
                   <Line endX="100.0" endY="5.0" layoutX="30.0" layoutY="470.0" startX="100.0" />
@@ -78,42 +78,42 @@
                   <Line endX="-5.0" endY="-200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" />
                   <Line endX="-5.0" endY="-300.0" layoutX="30.0" layoutY="470.0" startY="-300.0" />
                   <Line endX="-5.0" endY="-400.0" layoutX="30.0" layoutY="470.0" startY="-400.0" />
-                  <Label fx:id="labelx1" alignment="CENTER" layoutX="95.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" text="1">
+                  <Label fx:id="labelx1" alignment="CENTER" layoutX="95.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labelx2" alignment="CENTER" layoutX="195.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" text="1">
+                  <Label fx:id="labelx2" alignment="CENTER" layoutX="195.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labelx3" alignment="CENTER" layoutX="295.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" text="1">
+                  <Label fx:id="labelx3" alignment="CENTER" layoutX="295.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labelx4" alignment="CENTER" layoutX="395.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" text="1">
+                  <Label fx:id="labelx4" alignment="CENTER" layoutX="395.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labely4" alignment="CENTER" layoutX="-18.0" layoutY="62.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0" text="1">
+                  <Label fx:id="labely4" alignment="CENTER" layoutX="-18.0" layoutY="62.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labely3" alignment="CENTER" layoutX="-18.0" layoutY="162.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0" text="1">
+                  <Label fx:id="labely3" alignment="CENTER" layoutX="-18.0" layoutY="162.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labely2" alignment="CENTER" layoutX="-18.0" layoutY="262.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0" text="1">
+                  <Label fx:id="labely2" alignment="CENTER" layoutX="-18.0" layoutY="262.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labely1" alignment="CENTER" layoutX="-18.0" layoutY="362.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0" text="1">
+                  <Label fx:id="labely1" alignment="CENTER" layoutX="-18.0" layoutY="362.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="10.0" prefWidth="70.0" rotate="90.0">
                      <font>
                         <Font size="10.0" />
                      </font>
@@ -123,6 +123,9 @@
                         <Font size="10.0" />
                      </font>
                   </Label>
+                  <Line fx:id="lineUnbounded1" visible="false" endX="350.0" endY="-350.0" layoutX="30.0" layoutY="470.0" startX="250.0" startY="-250.0" stroke="#d72525" strokeWidth="2.0" />
+                  <Line fx:id="lineUnbounded2" visible="false" endX="350.0" endY="-330.0" layoutX="30.0" layoutY="470.0" startX="350.0" startY="-350.0" stroke="#d72525" strokeWidth="2.0" />
+                  <Line fx:id="lineUnbounded3" visible="false" endX="330.0" endY="-350.0" layoutX="30.0" layoutY="470.0" startX="350.0" startY="-350.0" stroke="#d72525" strokeWidth="2.0" />
                </children>
             </AnchorPane>
          </children>

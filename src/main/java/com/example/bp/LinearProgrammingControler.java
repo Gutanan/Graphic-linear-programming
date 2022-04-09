@@ -34,7 +34,14 @@ public class LinearProgrammingControler {
     @FXML
     protected void count() {
         doAdjustZoom = true;
+        clearUnbounded();
         drawAndCount();
+    }
+
+    private void clearUnbounded() {
+        lineUnbounded1.setVisible(false);
+        lineUnbounded2.setVisible(false);
+        lineUnbounded3.setVisible(false);
     }
 
     private void drawAndCount(){
@@ -93,6 +100,14 @@ public class LinearProgrammingControler {
         output.appendText(simplex.printString());
         optimalLabel.setText(simplex.returnSolutionVector());
         purposePriceLabel.setText(simplex.returnSolutionPrice());
+
+        if (simplex.getResultError().equals(SimplexMethod.ERROR.UNBOUNDED)){
+            lineUnbounded1.setVisible(true);
+            lineUnbounded2.setVisible(true);
+            lineUnbounded3.setVisible(true);
+            this.purpLine.setVisible(false);
+            optimalCircle.setVisible(false);
+        }
 
     }
 
@@ -204,6 +219,15 @@ public class LinearProgrammingControler {
 
     @FXML
     private Label purposePriceLabel;
+
+    @FXML
+    private Line lineUnbounded1;
+
+    @FXML
+    private Line lineUnbounded2;
+
+    @FXML
+    private Line lineUnbounded3;
 
     /**
      * Method takes the input and with regex finds constrain coeficients

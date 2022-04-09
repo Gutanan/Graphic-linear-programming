@@ -26,6 +26,10 @@ public class SimplexMethod {
         MIN
     };
 
+    public ERROR getResultError(){
+        return resultError;
+    }
+
     /**
      * Simplex table constructor with setting the parameters
      * @param numOfConstraints
@@ -204,6 +208,9 @@ public class SimplexMethod {
      * @return
      */
     public String returnSolutionPrice(){
+        if (resultError.equals(ERROR.UNBOUNDED)){
+            return "z = Infinity";
+        }
         return "z = (" + String.format("%.2f", table[rows-1][cols-1]) + ")";
     }
 
@@ -212,6 +219,9 @@ public class SimplexMethod {
      * @return String in LP form
      */
     public String returnSolutionVector(){
+        if (resultError.equals(ERROR.UNBOUNDED)){
+            return "x = Unbounded";
+        }
         String result = "x = (";
         String[] vector = new String[cols-1];
         for (int i = 0; i < vector.length; i++){
