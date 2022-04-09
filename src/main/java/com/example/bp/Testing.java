@@ -10,15 +10,15 @@ public class Testing {
     public static void main(String[] args) {
 
         //LinearLine line1 = new LinearLine(2,1,2, LinearLine.RESTRAIN.GREATER);
-        //LinearLine line2 = new LinearLine(4,2,8, LinearLine.RESTRAIN.LOWER);
+        //LinearLine line2 = new LinearLine(1,3,6, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(5,2,5, LinearLine.RESTRAIN.EQUAL);
         //LinearLine line1 = new LinearLine(1,1,4, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(-2,3,0, LinearLine.RESTRAIN.LOWER);
         //LinearLine line3 = new LinearLine(4,3,12, LinearLine.RESTRAIN.EQUAL);
         LinearLine line1 = new LinearLine(7,3,14, LinearLine.RESTRAIN.GREATER);
         LinearLine line2 = new LinearLine(1,0,6, LinearLine.RESTRAIN.LOWER);
-        //LinearLine line3 = new LinearLine(0,1,4, LinearLine.RESTRAIN.LOWER);
-        //LinearLine line4 = new LinearLine(1,2,5, LinearLine.RESTRAIN.EQUAL);
+        LinearLine line3 = new LinearLine(0,1,4, LinearLine.RESTRAIN.LOWER);
+        LinearLine line4 = new LinearLine(1,2,5, LinearLine.RESTRAIN.EQUAL);
 
 
         PurposeLine purposeLine = new PurposeLine(PurposeLine.PURPOSE.MAX, 3, 5);
@@ -26,8 +26,8 @@ public class Testing {
         LinesArray lines = new LinesArray();
         lines.addLine(line1);
         lines.addLine(line2);
-        //lines.addLine(line3);
-        //lines.addLine(line4);
+        lines.addLine(line3);
+        lines.addLine(line4);
 
         System.out.println("Základní řešení");
         System.out.println(lines.findBasicSolutions());
@@ -63,6 +63,7 @@ public class Testing {
             simplex.iterateTable();
             System.out.println(simplex.printString());
         }
+        System.out.println(simplex.returnSolutionVector());
 
 
 

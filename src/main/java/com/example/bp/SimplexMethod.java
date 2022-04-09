@@ -185,6 +185,44 @@ public class SimplexMethod {
         System.out.println(resultError.toString());
     }
 
+    public String returnSolutionVector(){
+        String result = "x = (";
+        String[] vector = new String[cols-1];
+        for (int i = 0; i < vector.length; i++){
+            vector[i] = "0,00";
+        }
+        for (int i = 0; i < table.length; i++){
+            for (int j = 0; j < table.length; j++){
+                if (table[i][j] == 1d && colIsUnitVector(i,j)){
+                    vector[j] = String.format("%.2f", table[i][cols-1]);
+                }
+            }
+        }
+        result += buildVector(vector);
+        result = result.substring(0, result.length() - 2);
+        result += ") \n";
+        result += "z = (" + String.format("%.2f", table[rows-1][cols-1]) + ")";
+        return result;
+    }
+
+    private String buildVector(String[] vector) {
+        String outcome = "";
+        for (int i = 0; i < vector.length; i++){
+            outcome += vector[i] + "; ";
+        }
+        return outcome;
+    }
+
+    private boolean colIsUnitVector(int i, int j) {
+        boolean isUnit = true;
+        for (int k = 0; k < table.length; k++){
+            if (table[k][j] != 0d && k != i){
+                isUnit = false;
+            }
+        }
+        return isUnit;
+    }
+
     /**
      * Method calculates other rows in order to make unit vector on entering variable
      * @param enteringVariable
