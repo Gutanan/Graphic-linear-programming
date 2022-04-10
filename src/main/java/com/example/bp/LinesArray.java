@@ -66,7 +66,7 @@ public class LinesArray {
 
     /**
      * Method goes through Basic Solutions points and evaluates, whether they are also Possible Solutions points
-     * While comparing it rounds the result to 2 decimals to avoid double wrong rounding
+     * While comparing it rounds the result to 6 decimals to avoid double wrong rounding
      * @return ArrayList of Possible Solutions points
      */
     public ArrayList<Point> findPossibleSolutions() {
@@ -77,7 +77,7 @@ public class LinesArray {
             isPossible = true;
             for (int j = 0; j < lines.size(); j++) {
                 double value = ((lines.get(j).getCoefX1() * basicSolutions.get(i).getX()) + (lines.get(j).getCoefX2() * basicSolutions.get(i).getY()));
-                value = round(value,2);
+                value = round(value,6);
                 if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
                     if (value > lines.get(j).getRightSide()) {
                         isPossible = false;

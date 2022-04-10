@@ -425,6 +425,9 @@ public class LinearProgrammingControler {
             polygon.getPoints().addAll(points);
             polygon.setSmooth(true);
         }
+        if (numberOfPoints == 0){
+            polygon.setVisible(false);
+        }
         lines.getLines().remove(lines.getLines().size()-1);
         lines.getLines().remove(lines.getLines().size()-1);
     }
@@ -545,13 +548,13 @@ public class LinearProgrammingControler {
      * @param lines constrains
      */
     private void drawShapes(PurposeLine purpose, LinesArray lines){
-        drawPurposeLine(purpose, purpLine, lines.findOptimalSolution(purpose));
-        drawOptimalCircle(lines.findOptimalSolution(purpose), optimalCircle);
-        drawPolygon(lines, possibleSolutionsPolygon);
-
         purpLine.setVisible(true);
         optimalCircle.setVisible(true);
         possibleSolutionsPolygon.setVisible(true);
+
+        drawPurposeLine(purpose, purpLine, lines.findOptimalSolution(purpose));
+        drawOptimalCircle(lines.findOptimalSolution(purpose), optimalCircle);
+        drawPolygon(lines, possibleSolutionsPolygon);
     }
 
     /**
