@@ -18,7 +18,8 @@ public class SimplexMethod {
     public static enum ERROR {
         NOT_OPTIMAL,
         IS_OPTIMAL,
-        UNBOUNDED
+        UNBOUNDED,
+        OPTIMAL_INFINITE
     };
 
     public static enum PURPOSE {
@@ -200,7 +201,6 @@ public class SimplexMethod {
                 error = checkSolution();
             }
         }
-        System.out.println(resultError.toString());
     }
 
     /**
@@ -237,7 +237,37 @@ public class SimplexMethod {
         result += buildVector(vector);
         result = result.substring(0, result.length() - 2);
         result += ")";
+        boolean areInfinitySolutions = false;
+        for (int i = 0; i < table[rows-1].length-1; i++){
+            if (table[rows-1][i] == 0 && !colIsUnitVectorFromZero(rows-1,i)){
+                areInfinitySolutions = true;
+            }
+        }
+        if (areInfinitySolutions){
+            result += " - nekonečně mnoho řešení";
+            resultError = ERROR.OPTIMAL_INFINITE;
+        }
         return result;
+    }
+
+    /**
+     * Method checks whether is the elements (i,j) column an unit vector, while element i,j is not 1
+     * @param i
+     * @param j
+     * @return
+     */
+    private boolean colIsUnitVectorFromZero(int i, int j) {
+        boolean isUnit = true;
+        boolean oneOne = false;
+        for (int k = 0; k < table.length; k++){
+            if ((table[k][j] != 0d && table[k][j] != 1) || (table[k][j] == 1 && oneOne)){
+                isUnit = false;
+            }
+            if (table[k][j] == 1){
+                oneOne = true;
+            }
+        }
+        return isUnit;
     }
 
     /**
@@ -374,12 +404,12 @@ public class SimplexMethod {
             rightSides[i] = table[i][cols-1];
         }
         if (this.purpose.equals(PURPOSE.MAX)){
-            if (!areAllNullNegative(table[rows - 1]) && areAllNullPositive(rightSides)){
+            if (!areAllNullNegative(avoidLastElement(table[rows - 1])) && areAllNullPositive(rightSides)){
                 error = ERROR.IS_OPTIMAL;
             }
         }
         if (this.purpose.equals(PURPOSE.MIN)){
-            if (!areAllNullPositive(table[rows - 1]) && areAllNullPositive(rightSides)){
+            if (!areAllNullPositive(avoidLastElement(table[rows - 1])) && areAllNullPositive(rightSides)){
                 error = ERROR.IS_OPTIMAL;
             }
         }

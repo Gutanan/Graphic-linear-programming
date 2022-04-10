@@ -49,7 +49,7 @@ public class Testing {
            isTwoPhase = true;
         }
 
-        SimplexMethod simplex = new SimplexMethod(lines.getLines().size()+twoPhase,2+numOfAdditional+numOfAuxiliary, SimplexMethod.PURPOSE.MAX, isTwoPhase);
+        SimplexMethod simplex = new SimplexMethod(lines.getLines().size()+twoPhase,2+numOfAdditional+numOfAuxiliary, SimplexMethod.PURPOSE.MIN, isTwoPhase);
 
         double[][] standartMatrix = lines.createMatrix();
         double[] purpLine = purposeLine.createVector(3+numOfAdditional+numOfAuxiliary);
@@ -64,12 +64,6 @@ public class Testing {
             System.out.println(simplex.printString());
         }
         System.out.println(simplex.returnSolutionVector());
-        double a = 0d;
-        for (int i = 1; i < 101; i++){
-            a += 1;
-            double d = 100d/i;
-            System.out.println(a + "   " + d);
-        }
 
 
         /*Simplex simplex = new Simplex(2, 4);

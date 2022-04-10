@@ -54,6 +54,15 @@ public class LinearProgrammingControler {
             lines.addLine(ln);
         }
 
+        if (lines.findPossibleSolutions().size() == 0){
+            optimalLabel.setText("Neexistuje přípustné řešení");
+            purposePriceLabel.setText("Neexistuje přípustné řešení");
+            optimalCircle.setVisible(false);
+            possibleSolutionsPolygon.setVisible(false);
+            purpLine.setVisible(false);
+            return;
+        }
+
         if (doAdjustZoom){
             adjustZoom(lines);
             doAdjustZoom = false;
@@ -85,7 +94,13 @@ public class LinearProgrammingControler {
             isTwoPhase = true;
         }
 
-        SimplexMethod simplex = new SimplexMethod(lines.getLines().size()+twoPhase,2+numOfAdditional+numOfAuxiliary, SimplexMethod.PURPOSE.MAX, isTwoPhase);
+        SimplexMethod simplex;
+        if (purpose.getPurpose().equals(PurposeLine.PURPOSE.MAX)){
+            simplex = new SimplexMethod(lines.getLines().size()+twoPhase,2+numOfAdditional+numOfAuxiliary, SimplexMethod.PURPOSE.MAX, isTwoPhase);
+        } else {
+            simplex = new SimplexMethod(lines.getLines().size()+twoPhase,2+numOfAdditional+numOfAuxiliary, SimplexMethod.PURPOSE.MIN, isTwoPhase);
+        }
+
 
         double[][] standartMatrix = lines.createMatrix();
         double[] purpLine = purpose.createVector(3+numOfAdditional+numOfAuxiliary);
@@ -106,6 +121,10 @@ public class LinearProgrammingControler {
             lineUnbounded2.setVisible(true);
             lineUnbounded3.setVisible(true);
             this.purpLine.setVisible(false);
+            optimalCircle.setVisible(false);
+        }
+
+        if (simplex.getResultError().equals(SimplexMethod.ERROR.OPTIMAL_INFINITE)){
             optimalCircle.setVisible(false);
         }
 
