@@ -1,9 +1,11 @@
 package com.example.bp;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
@@ -42,6 +44,7 @@ public class LinearProgrammingControler {
         lineUnbounded1.setVisible(false);
         lineUnbounded2.setVisible(false);
         lineUnbounded3.setVisible(false);
+        twoPossibleLine.setVisible(false);
     }
 
     private void drawAndCount(){
@@ -50,7 +53,15 @@ public class LinearProgrammingControler {
         for (int i = 2; i < numOfConstrains+2; i++){
             TextField tf = (TextField) constrains.getChildren().get(i-1);
             String lineText = tf.getText();
-            LinearLine ln = mineLine(lineText, lineMiner);
+            LinearLine ln = null;
+            try {
+                ln = mineLine(lineText, lineMiner);
+            } catch (Exception e){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setContentText("Špatné zadání omezení");
+                alert.showAndWait();
+                return;
+            }
             lines.addLine(ln);
         }
 
@@ -76,7 +87,15 @@ public class LinearProgrammingControler {
         }
 
         String purposeText = purposeLine.getText();
-        PurposeLine purpose = minePurposeLine(purposeText, purposeMiner);
+        PurposeLine purpose = null;
+        try {
+            purpose = minePurposeLine(purposeText, purposeMiner);
+        } catch (Exception e){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Špatné zadání účelové funkce");
+            alert.showAndWait();
+            return;
+        }
 
         output.appendText("Optimální řešení: \n");
         output.appendText(lines.findOptimalSolution(purpose).toString());
@@ -115,6 +134,11 @@ public class LinearProgrammingControler {
         output.appendText(simplex.printString());
         optimalLabel.setText(simplex.returnSolutionVector());
         purposePriceLabel.setText(simplex.returnSolutionPrice());
+        //set label for optimal solution coordiantes
+        String s = "[";
+        s += optimalLabel.getText().substring(5,15);
+        s += "]";
+        optimalSolutionPointLabel.setText(s);
 
         if (simplex.getResultError().equals(SimplexMethod.ERROR.UNBOUNDED)){
             lineUnbounded1.setVisible(true);
@@ -139,6 +163,11 @@ public class LinearProgrammingControler {
         if (numOfConstrains < 10){
             numOfConstrains++;
             constrains.getChildren().get(numOfConstrains).setVisible(true);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Maximální počet omezení je 10");
+            alert.showAndWait();
+            return;
         }
     }
 
@@ -156,6 +185,12 @@ public class LinearProgrammingControler {
             numOfConstrains--;
             count();
         }
+        else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Minimální počet omezení je 1");
+            alert.showAndWait();
+            return;
+        }
     }
 
     /**
@@ -167,6 +202,9 @@ public class LinearProgrammingControler {
         purpLine.setVisible(false);
         optimalCircle.setVisible(false);
         possibleSolutionsPolygon.setVisible(false);
+        output.clear();
+        optimalLabel.setText("");
+        purposePriceLabel.setText("");
 
         for (int i = 2; i < numOfConstrains+2; i++){
             TextField tf = (TextField) constrains.getChildren().get(i-1);
@@ -189,6 +227,16 @@ public class LinearProgrammingControler {
     }
 
     @FXML
+    protected void showLabel() {
+        optimalSolutionPointLabel.setVisible(true);
+    }
+
+    @FXML
+    protected void removeLabel() {
+        optimalSolutionPointLabel.setVisible(false);
+    }
+
+    @FXML
     private TextField purposeLine;
 
     @FXML
@@ -196,6 +244,15 @@ public class LinearProgrammingControler {
 
     @FXML
     private Circle optimalCircle;
+
+    @FXML
+    private Label optimalSolutionPointLabel;
+
+    @FXML
+    private Circle optimalCircleSecond;
+
+    @FXML
+    private Label infiniteOptimalPointLabel;
 
     @FXML
     private Polygon possibleSolutionsPolygon;
@@ -247,6 +304,12 @@ public class LinearProgrammingControler {
 
     @FXML
     private Line lineUnbounded3;
+
+    @FXML
+    private Line twoPossibleLine;
+
+    @FXML
+    private Line infiniteOptimalLine;
 
     /**
      * Method takes the input and with regex finds constrain coeficients
@@ -418,6 +481,9 @@ public class LinearProgrammingControler {
     private void drawOptimalCircle(Point solution, Circle circle) {
         circle.setCenterX(solution.getX() * zoom);
         circle.setCenterY(solution.getY() * (-zoom));
+
+        optimalSolutionPointLabel.setLayoutX(solution.getX() * zoom + 10 + 30);
+        optimalSolutionPointLabel.setLayoutY(solution.getY() * (-zoom) -20 + 470);
     }
 
     /**
@@ -446,6 +512,14 @@ public class LinearProgrammingControler {
         }
         if (numberOfPoints == 0){
             polygon.setVisible(false);
+        }
+        if (numberOfPoints == 2){
+            polygon.setVisible(false);
+            twoPossibleLine.setStartX(possiblePoints.get(0).getX() * zoom);
+            twoPossibleLine.setStartY(possiblePoints.get(0).getY() * (-zoom));
+            twoPossibleLine.setEndX(possiblePoints.get(1).getX() * zoom);
+            twoPossibleLine.setEndY(possiblePoints.get(1).getY() * (-zoom));
+            twoPossibleLine.setVisible(true);
         }
         lines.getLines().remove(lines.getLines().size()-1);
         lines.getLines().remove(lines.getLines().size()-1);
@@ -679,4 +753,5 @@ public class LinearProgrammingControler {
         labelx4.setText(String.valueOf(fourth));
         labely4.setText(String.valueOf(fourth));
     }
+
 }
