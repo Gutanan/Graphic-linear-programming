@@ -1,6 +1,7 @@
 package com.example.bp;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -11,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.stage.Stage;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -222,6 +224,8 @@ public class LinearProgrammingControler {
         purpLine.setVisible(false);
         optimalCircle.setVisible(false);
         possibleSolutionsPolygon.setVisible(false);
+        infiniteOptimalPointLabel.setVisible(false);
+        optimalSolutionPointLabel.setVisible(false);
         output.clear();
         optimalLabel.setText("");
         purposePriceLabel.setText("");
@@ -232,6 +236,20 @@ public class LinearProgrammingControler {
             Line line = (Line) graph.getChildren().get(i);
             line.setVisible(false);
         }
+    }
+
+    @FXML
+    protected void showUserGuide(){
+        Stage newStage = new Stage();
+        VBox comp = new VBox();
+        Label guide = new Label("Tohle je okno s nápovědou");
+        Label author = new Label("petd11");
+        comp.getChildren().add(guide);
+        comp.getChildren().add(author);
+
+        Scene stageScene = new Scene(comp, 300, 600);
+        newStage.setScene(stageScene);
+        newStage.show();
     }
 
     @FXML
