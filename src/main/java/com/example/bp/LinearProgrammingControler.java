@@ -45,6 +45,8 @@ public class LinearProgrammingControler {
         lineUnbounded2.setVisible(false);
         lineUnbounded3.setVisible(false);
         twoPossibleLine.setVisible(false);
+        optimalCircleSecond.setVisible(false);
+        infiniteOptimalLine.setVisible(false);
     }
 
     private void drawAndCount(){
@@ -97,10 +99,6 @@ public class LinearProgrammingControler {
             return;
         }
 
-        output.appendText("Optimální řešení: \n");
-        output.appendText(lines.findOptimalSolution(purpose).toString());
-        output.appendText("\n");
-
         drawShapes(purpose,lines);
         //Simplex method
         lines.doRightPositive();
@@ -134,6 +132,12 @@ public class LinearProgrammingControler {
         output.appendText(simplex.printString());
         optimalLabel.setText(simplex.returnSolutionVector());
         purposePriceLabel.setText(simplex.returnSolutionPrice());
+
+        //parse optimal solution coordinates
+        Point optimalSolPoint = simplex.returnOptimalPoint();
+        drawOptimalCircle(optimalSolPoint, optimalCircle);
+        setSolutionLabel(optimalSolPoint);
+
         //set label for optimal solution coordiantes
         String s = "[";
         s += optimalLabel.getText().substring(5,15);
@@ -149,7 +153,23 @@ public class LinearProgrammingControler {
         }
 
         if (simplex.getResultError().equals(SimplexMethod.ERROR.OPTIMAL_INFINITE)){
-            optimalCircle.setVisible(false);
+            simplex.iterateToFindSecondOptimal();
+            Point optimalSolPointSecond = simplex.returnOptimalPoint();
+            drawOptimalCircle(optimalSolPointSecond, optimalCircleSecond);
+
+            String secondLabel = "[";
+            secondLabel += simplex.returnSolutionVector().substring(5,15);
+            secondLabel += "]";
+            infiniteOptimalPointLabel.setText(secondLabel);
+            setSolutionLabelSecond(optimalSolPointSecond);
+
+
+            optimalCircleSecond.setVisible(true);
+            infiniteOptimalLine.setStartX(optimalSolPoint.getX() * zoom);
+            infiniteOptimalLine.setStartY(optimalSolPoint.getY() * (-zoom));
+            infiniteOptimalLine.setEndX(optimalSolPointSecond.getX() * zoom);
+            infiniteOptimalLine.setEndY(optimalSolPointSecond.getY() * (-zoom));
+            infiniteOptimalLine.setVisible(true);
         }
 
     }
@@ -234,6 +254,16 @@ public class LinearProgrammingControler {
     @FXML
     protected void removeLabel() {
         optimalSolutionPointLabel.setVisible(false);
+    }
+
+    @FXML
+    protected void showLabelSecond() {
+        infiniteOptimalPointLabel.setVisible(true);
+    }
+
+    @FXML
+    protected void removeLabelSecond() {
+        infiniteOptimalPointLabel.setVisible(false);
     }
 
     @FXML
@@ -482,8 +512,16 @@ public class LinearProgrammingControler {
         circle.setCenterX(solution.getX() * zoom);
         circle.setCenterY(solution.getY() * (-zoom));
 
+    }
+
+    private void setSolutionLabel(Point solution){
         optimalSolutionPointLabel.setLayoutX(solution.getX() * zoom + 10 + 30);
         optimalSolutionPointLabel.setLayoutY(solution.getY() * (-zoom) -20 + 470);
+    }
+
+    private void setSolutionLabelSecond(Point solution){
+        infiniteOptimalPointLabel.setLayoutX(solution.getX() * zoom + 10 + 30);
+        infiniteOptimalPointLabel.setLayoutY(solution.getY() * (-zoom) -20 + 470);
     }
 
     /**
@@ -646,7 +684,6 @@ public class LinearProgrammingControler {
         possibleSolutionsPolygon.setVisible(true);
 
         drawPurposeLine(purpose, purpLine, lines.findOptimalSolution(purpose));
-        drawOptimalCircle(lines.findOptimalSolution(purpose), optimalCircle);
         drawPolygon(lines, possibleSolutionsPolygon);
     }
 

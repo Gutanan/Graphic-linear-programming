@@ -65,7 +65,7 @@
                   <Line fx:id="line8" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
                   <Line fx:id="line9" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
                   <Line fx:id="line10" endX="200.0" layoutX="30.0" layoutY="470.0" startY="-200.0" visible="false" />
-                  <Circle fx:id="optimalCircle" centerX="100.0" centerY="-200.0" fill="#ff1f1f" layoutX="30.0" layoutY="470.0" onMouseEntered="#showLabel" onMouseExited="#removeLabel" radius="5.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
+                  <Circle fx:id="optimalCircle" centerX="100.0" centerY="-200.0" fill="#ff1f1f" layoutX="30.0" layoutY="470.0" onMouseEntered="#showLabel" onMouseExited="#removeLabel" radius="7.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
                   <Line fx:id="purpLine" endX="150.0" fill="RED" layoutX="30.0" layoutY="470.0" startY="-100.0" stroke="RED" visible="false" />
                   <Polygon fx:id="possibleSolutionsPolygon" fill="LIME" layoutX="30.0" layoutY="470.0" opacity="0.3" points="100, -100, 250, -100, 177, -200" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" visible="false" />
                   <Button layoutX="404.0" layoutY="20.0" mnemonicParsing="false" onAction="#zoomPlus" prefHeight="35.0" prefWidth="35.0" text="+" />
@@ -126,9 +126,9 @@
                   <Line fx:id="lineUnbounded1" endX="350.0" endY="-350.0" layoutX="30.0" layoutY="470.0" startX="250.0" startY="-250.0" stroke="#d72525" strokeWidth="2.0" visible="false" />
                   <Line fx:id="lineUnbounded2" endX="350.0" endY="-330.0" layoutX="30.0" layoutY="470.0" startX="350.0" startY="-350.0" stroke="#d72525" strokeWidth="2.0" visible="false" />
                   <Line fx:id="lineUnbounded3" endX="330.0" endY="-350.0" layoutX="30.0" layoutY="470.0" startX="350.0" startY="-350.0" stroke="#d72525" strokeWidth="2.0" visible="false" />
-                  <Line fx:id="twoPossibleLine" layoutX="30.0" layoutY="470.0" startX="100.0" startY="-100.0" stroke="#02ff0b" strokeWidth="3.0" visible="false" />
-                  <Line fx:id="infiniteOptimalLine" layoutX="30.0" layoutY="470.0" startX="100.0" startY="-100.0" stroke="#ff0803" strokeWidth="3.0" visible="false" />
-                  <Circle fx:id="optimalCircleSecond" centerX="100.0" centerY="-200.0" fill="#ff1f1f" layoutX="30.0" layoutY="470.0" onMouseEntered="#showLabel" onMouseExited="#removeLabel" radius="5.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
+                  <Line fx:id="twoPossibleLine" layoutX="30.0" layoutY="470.0" startX="100.0" startY="-100.0" stroke="#02ff0b" strokeWidth="4.0" visible="false" />
+                  <Line fx:id="infiniteOptimalLine" layoutX="30.0" layoutY="470.0" startX="100.0" startY="-100.0" stroke="#ff0803" strokeWidth="4.0" visible="false" />
+                  <Circle fx:id="optimalCircleSecond" centerX="100.0" centerY="-200.0" fill="#ff1f1f" layoutX="30.0" layoutY="470.0" onMouseEntered="#showLabelSecond" onMouseExited="#removeLabelSecond" radius="7.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
                   <Label fx:id="optimalSolutionPointLabel" />
                   <Label fx:id="infiniteOptimalPointLabel" />
                </children>

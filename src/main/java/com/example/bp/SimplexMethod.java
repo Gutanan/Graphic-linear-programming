@@ -209,7 +209,7 @@ public class SimplexMethod {
      */
     public String returnSolutionPrice(){
         if (resultError.equals(ERROR.UNBOUNDED)){
-            return "z = Infinity";
+            return "z = Nekonečno";
         }
         return "z = (" + String.format("%.2f", table[rows-1][cols-1]) + ")";
     }
@@ -220,7 +220,7 @@ public class SimplexMethod {
      */
     public String returnSolutionVector(){
         if (resultError.equals(ERROR.UNBOUNDED)){
-            return "x = Unbounded";
+            return "x = Neomezená hodnota účelové funkce";
         }
         String result = "x = (";
         String[] vector = new String[cols-1];
@@ -248,6 +248,23 @@ public class SimplexMethod {
             resultError = ERROR.OPTIMAL_INFINITE;
         }
         return result;
+    }
+
+    public void iterateToFindSecondOptimal(){
+        int entering = 0;
+        for (int i = 0; i < table[rows-1].length-1; i++){
+            if (table[rows-1][i] == 0 && !colIsUnitVectorFromZero(rows-1,i)){
+                entering = i;
+            }
+        }
+        double[] valuesOfExitingVariable = new double[rows - 1];
+        setValuesOfExitingVariableVector(valuesOfExitingVariable,entering);
+        int exiting = findPositionMin(valuesOfExitingVariable);
+        double keyElement = table[exiting][entering];
+        for (int i = 0; i < cols; i++) {
+            table[exiting][i] /= keyElement;
+        }
+        calculateOtherRows(entering,exiting);
     }
 
     /**
@@ -416,4 +433,18 @@ public class SimplexMethod {
         return error;
 
     }
+
+    public Point returnOptimalPoint(){
+        double[] vector = new double[2];
+        for (int i = 0; i < table.length; i++){
+            for (int j = 0; j < 2; j++){
+                if (table[i][j] == 1d && colIsUnitVector(i,j)){
+                    vector[j] = table[i][cols-1];
+                }
+            }
+        }
+        Point result = new Point(vector[0],vector[1]);
+        return result;
+    }
+
 }
