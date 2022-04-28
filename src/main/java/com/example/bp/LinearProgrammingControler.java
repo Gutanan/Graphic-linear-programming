@@ -732,33 +732,27 @@ public class LinearProgrammingControler {
      * @return
      */
     private double justifyZoom(double doubleValue) {
-        double result;
-        if (doubleValue >= 100){
-            int i = (int) doubleValue;
-            i = (i / 100 ) * 100;
-            result = (double) i;
-        } else if (doubleValue < 100 && doubleValue >= 80){
-            result = 80d;
-        } else if (doubleValue < 80 && doubleValue >= 64){
-            result = 64d;
-        } else if (doubleValue < 64 && doubleValue >= 50){
+        double result = 20d;
+        if (doubleValue >= 50) {
             result = 50d;
-        } else if (doubleValue < 50 && doubleValue >= 40){
-            result = 40d;
-        } else if (doubleValue < 40 && doubleValue >= 32){
-            result = 32d;
-        } else if (doubleValue < 32 && doubleValue >= 20){
-            result = 20d;
-        } else if (doubleValue < 20 && doubleValue >= 16){
-            result = 16d;
-        } else if (doubleValue < 16 && doubleValue >= 10){
-            result = 10d;
-        } else if (doubleValue < 10 && doubleValue >= 5){
-            result = 5d;
-        } else if (doubleValue==3){
-            result = 2d;
-        } else {
-            result = doubleValue;
+        }
+        boolean repeat = true;
+        if (doubleValue > result){
+            while (repeat){
+                result *= 2;
+                if (doubleValue <= result){
+                    repeat = false;
+                }
+            }
+            result /= 2;
+        }
+        if (doubleValue < result){
+            while (repeat){
+                result /= 2;
+                if (doubleValue >= result){
+                    repeat = false;
+                }
+            }
         }
         return result;
     }
