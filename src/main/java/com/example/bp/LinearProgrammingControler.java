@@ -432,12 +432,25 @@ public class LinearProgrammingControler {
             Point y0 = linearLine.getNullY();
             line.setStartX(y0.getX() * zoom);
             line.setStartY(y0.getY() * (-zoom));
+
+            double xNull = x0.getX() * zoom;
+            double yNull = y0.getY() * zoom;
+            if (xNull >= 450d){
+                line.setEndX(450d);
+                double y = (((450d/zoom)*linearLine.getCoefX1())-linearLine.getRightSide())/(-linearLine.getCoefX2());
+                line.setEndY(y * (-zoom));
+            }
+            if (yNull >= 450d){
+                double x = (((450d/zoom)*linearLine.getCoefX2())-linearLine.getRightSide())/(-linearLine.getCoefX1());
+                line.setStartX(x * zoom);
+                line.setStartY(-450d);
+            }
+
         }
         if (linearLine.getNullX().getX() < 0 && linearLine.getNullY().getY() > 0){
             line.setStartX(linearLine.getNullY().getX() * zoom);
             line.setStartY(linearLine.getNullY().getY() * (-zoom));
             double y = (((450d/zoom)*linearLine.getCoefX1())-linearLine.getRightSide())/(-linearLine.getCoefX2());
-            System.out.println(y);
             if (y <= (450d/zoom)){
                 line.setEndX(450d);
                 line.setEndY(y * (-zoom));
@@ -451,7 +464,6 @@ public class LinearProgrammingControler {
             line.setStartX(linearLine.getNullX().getX() * zoom);
             line.setStartY(linearLine.getNullX().getY() * (-zoom));
             double y = (((450d/zoom)*linearLine.getCoefX1())-linearLine.getRightSide())/(-linearLine.getCoefX2());
-            System.out.println(y);
             if (y <= (450d/zoom)){
                 line.setEndX(450d);
                 line.setEndY(y * (-zoom));
