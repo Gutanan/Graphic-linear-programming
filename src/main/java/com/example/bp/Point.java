@@ -29,7 +29,7 @@ public class Point {
     }
 
     public String toString(){
-        String result = "[" + x + ";" + y + "]";
+        String result = "[" + String.format("%.2f",x) + ";" + String.format("%.2f",y) + "]";
         return result;
     }
 }

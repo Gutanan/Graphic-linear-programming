@@ -2,11 +2,7 @@ package com.example.bp;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
@@ -38,11 +34,11 @@ public class LinearProgrammingControler {
     @FXML
     protected void count() {
         doAdjustZoom = true;
-        clearUnbounded();
+        clearNotNeeded();
         drawAndCount();
     }
 
-    private void clearUnbounded() {
+    private void clearNotNeeded() {
         lineUnbounded1.setVisible(false);
         lineUnbounded2.setVisible(false);
         lineUnbounded3.setVisible(false);
@@ -53,6 +49,12 @@ public class LinearProgrammingControler {
 
     private void drawAndCount(){
         output.clear();
+        //erase basic points
+        for (int i = graph.getChildren().size() -1; i > 41; i--){
+            graph.getChildren().remove(i);
+        }
+        checkboxBasicSolutions.setSelected(false);
+        //start new task
         LinesArray lines = new LinesArray();
         for (int i = 2; i < numOfConstrains+2; i++){
             TextField tf = (TextField) constrains.getChildren().get(i-1);
@@ -68,7 +70,9 @@ public class LinearProgrammingControler {
             }
             lines.addLine(ln);
         }
-
+        //count basic points
+        drawBasicSolutions(lines);
+        //if there aro no possible solutions
         if (lines.findPossibleSolutions().size() == 0){
             optimalLabel.setText("Neexistuje přípustné řešení");
             purposePriceLabel.setText("Neexistuje přípustné řešení");
@@ -77,13 +81,13 @@ public class LinearProgrammingControler {
             purpLine.setVisible(false);
             return;
         }
-
+        //adjust zoom when needed
         if (doAdjustZoom){
             adjustZoom(lines);
             doAdjustZoom = false;
         }
         setLabels();
-
+        //draw lines
         for (int i = 0; i < lines.getLines().size(); i++){
             Line line = (Line) graph.getChildren().get(i+2);
             drawLine(lines.getLines().get(i), line);
@@ -140,12 +144,6 @@ public class LinearProgrammingControler {
         drawOptimalCircle(optimalSolPoint, optimalCircle);
         setSolutionLabel(optimalSolPoint);
 
-        //set label for optimal solution coordiantes
-        String s = "[";
-        s += optimalLabel.getText().substring(5,15);
-        s += "]";
-        optimalSolutionPointLabel.setText(s);
-
         if (simplex.getResultError().equals(SimplexMethod.ERROR.UNBOUNDED)){
             lineUnbounded1.setVisible(true);
             lineUnbounded2.setVisible(true);
@@ -158,13 +156,7 @@ public class LinearProgrammingControler {
             simplex.iterateToFindSecondOptimal();
             Point optimalSolPointSecond = simplex.returnOptimalPoint();
             drawOptimalCircle(optimalSolPointSecond, optimalCircleSecond);
-
-            String secondLabel = "[";
-            secondLabel += simplex.returnSolutionVector().substring(5,15);
-            secondLabel += "]";
-            infiniteOptimalPointLabel.setText(secondLabel);
             setSolutionLabelSecond(optimalSolPointSecond);
-
 
             optimalCircleSecond.setVisible(true);
             infiniteOptimalLine.setStartX(optimalSolPoint.getX() * zoom);
@@ -175,6 +167,7 @@ public class LinearProgrammingControler {
         }
 
     }
+
 
     /**
      * Method is run by button "Přidej Omezení"
@@ -212,6 +205,25 @@ public class LinearProgrammingControler {
             alert.setContentText("Minimální počet omezení je 1");
             alert.showAndWait();
             return;
+        }
+    }
+
+    @FXML
+    protected void showBasicSolutions(){
+        if (graph.getChildren().size() <= 42){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Není vypočítané žádné řešení");
+            alert.showAndWait();
+            return;
+        }
+        if (checkboxBasicSolutions.isSelected()) {
+            for (int i = graph.getChildren().size() - 1; i > 41; i--) {
+                graph.getChildren().get(i).setVisible(true);
+            }
+        } else {
+            for (int i = graph.getChildren().size() - 1; i > 41; i--) {
+                graph.getChildren().get(i).setVisible(false);
+            }
         }
     }
 
@@ -286,6 +298,9 @@ public class LinearProgrammingControler {
 
     @FXML
     private TextField purposeLine;
+
+    @FXML
+    private CheckBox checkboxBasicSolutions;
 
     @FXML
     private Line purpLine;
@@ -520,6 +535,26 @@ public class LinearProgrammingControler {
         }
 
     }
+
+    private void drawBasicSolutions(LinesArray lines) {
+        ArrayList<Point> basicSolutions = lines.findBasicSolutions();
+        for (Point i : basicSolutions){
+            Label label = new Label(i.toString());
+            label.setLayoutX(i.getX() * zoom + 10 + 30);
+            label.setLayoutY(i.getY() * (-zoom) -20 + 470);
+            label.setVisible(false);
+            Circle circle = new Circle();
+            circle.setRadius(3d);
+            circle.setLayoutX(30);
+            circle.setLayoutY(470d);
+            circle.setCenterX(i.getX() * zoom);
+            circle.setCenterY(i.getY() * (-zoom));
+            circle.setVisible(false);
+            graph.getChildren().add(label);
+            graph.getChildren().add(circle);
+
+        }
+    }
     /**
      * Method counts the right side of the PurposeFunction
      * Method sets the ends of a javafx line -> draws the purpose line in the graph
@@ -547,11 +582,14 @@ public class LinearProgrammingControler {
     private void setSolutionLabel(Point solution){
         optimalSolutionPointLabel.setLayoutX(solution.getX() * zoom + 10 + 30);
         optimalSolutionPointLabel.setLayoutY(solution.getY() * (-zoom) -20 + 470);
+        optimalSolutionPointLabel.setText(solution.toString());
     }
 
     private void setSolutionLabelSecond(Point solution){
         infiniteOptimalPointLabel.setLayoutX(solution.getX() * zoom + 10 + 30);
         infiniteOptimalPointLabel.setLayoutY(solution.getY() * (-zoom) -20 + 470);
+        infiniteOptimalPointLabel.setText(solution.toString());
+
     }
 
     /**
