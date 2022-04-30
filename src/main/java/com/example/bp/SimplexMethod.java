@@ -72,12 +72,16 @@ public class SimplexMethod {
      */
     public String printString() {
         String tableau = "";
+        for (int j = 0; j < cols - 1; j++){
+            tableau += ("\t" +"  x" + (j+1) + "\t");
+        }
+        tableau += "\t  b\n\t";
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 String value = String.format("%.2f", table[i][j]);
                 tableau += (value + "\t");
             }
-            tableau += "\n";
+            tableau += "\n\t";
         }
         tableau += "\n";
         return tableau;

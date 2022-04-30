@@ -70,8 +70,7 @@ public class LinearProgrammingControler {
             }
             lines.addLine(ln);
         }
-        //count basic points
-        drawBasicSolutions(lines);
+
         //if there aro no possible solutions
         if (lines.findPossibleSolutions().size() == 0){
             optimalLabel.setText("Neexistuje přípustné řešení");
@@ -86,6 +85,9 @@ public class LinearProgrammingControler {
             adjustZoom(lines);
             doAdjustZoom = false;
         }
+        //count basic points
+        drawBasicSolutions(lines);
+        //set labels on axis
         setLabels();
         //draw lines
         for (int i = 0; i < lines.getLines().size(); i++){
@@ -150,6 +152,8 @@ public class LinearProgrammingControler {
             lineUnbounded3.setVisible(true);
             this.purpLine.setVisible(false);
             optimalCircle.setVisible(false);
+            optimalSolutionPointLabel.setVisible(false);
+            infiniteOptimalPointLabel.setVisible(false);
         }
 
         if (simplex.getResultError().equals(SimplexMethod.ERROR.OPTIMAL_INFINITE)){
@@ -241,12 +245,17 @@ public class LinearProgrammingControler {
         output.clear();
         optimalLabel.setText("");
         purposePriceLabel.setText("");
+        clearNotNeeded();
 
         for (int i = 2; i < numOfConstrains+2; i++){
             TextField tf = (TextField) constrains.getChildren().get(i-1);
             tf.setText("");
             Line line = (Line) graph.getChildren().get(i);
             line.setVisible(false);
+        }
+
+        for (int i = graph.getChildren().size() -1; i > 41; i--){
+            graph.getChildren().remove(i);
         }
     }
 
