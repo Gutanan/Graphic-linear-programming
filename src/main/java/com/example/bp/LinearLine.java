@@ -27,11 +27,11 @@ public class LinearLine {
     /**
      * Restrain can be GREATER or LOWER or EQUAL value
      */
-    public static enum RESTRAIN{
+    public enum RESTRAIN{
         GREATER,
         LOWER,
         EQUAL
-    };
+    }
 
     public Point getNullX() {
         return nullX;
@@ -90,14 +90,6 @@ public class LinearLine {
         return restrain;
     }
 
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-
-        long factor = (long) Math.pow(10, places);
-        value = value * factor;
-        long tmp = Math.round(value);
-        return (double) tmp / factor;
-    }
 
     public String toString(){
         return "X0 = " + nullX.toString() + "\nY0 = " + nullY.toString();

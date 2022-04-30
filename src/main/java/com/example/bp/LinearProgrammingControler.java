@@ -38,6 +38,9 @@ public class LinearProgrammingControler {
         drawAndCount();
     }
 
+    /**
+     * method deletes all unnecessary elements
+     */
     private void clearNotNeeded() {
         lineUnbounded1.setVisible(false);
         lineUnbounded2.setVisible(false);
@@ -47,6 +50,9 @@ public class LinearProgrammingControler {
         infiniteOptimalLine.setVisible(false);
     }
 
+    /**
+     * Main method of the user interface - it counts and draws
+     */
     private void drawAndCount(){
         output.clear();
         //erase basic points
@@ -59,7 +65,7 @@ public class LinearProgrammingControler {
         for (int i = 2; i < numOfConstrains+2; i++){
             TextField tf = (TextField) constrains.getChildren().get(i-1);
             String lineText = tf.getText();
-            LinearLine ln = null;
+            LinearLine ln;
             try {
                 ln = mineLine(lineText, lineMiner);
             } catch (Exception e){
@@ -97,7 +103,7 @@ public class LinearProgrammingControler {
         }
 
         String purposeText = purposeLine.getText();
-        PurposeLine purpose = null;
+        PurposeLine purpose;
         try {
             purpose = minePurposeLine(purposeText, purposeMiner);
         } catch (Exception e){
@@ -186,7 +192,6 @@ public class LinearProgrammingControler {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("Maximální počet omezení je 10");
             alert.showAndWait();
-            return;
         }
     }
 
@@ -208,10 +213,13 @@ public class LinearProgrammingControler {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("Minimální počet omezení je 1");
             alert.showAndWait();
-            return;
         }
     }
 
+    /**
+     * Method is controlled by checkbox. If is checked it shows the basic solutions
+     * labels. If is unchecked it makes the invisible
+     */
     @FXML
     protected void showBasicSolutions(){
         if (graph.getChildren().size() <= 42){
@@ -259,6 +267,9 @@ public class LinearProgrammingControler {
         }
     }
 
+    /**
+     * Method is run by button "Nápověda" in menubar
+     */
     @FXML
     protected void showUserGuide(){
         Stage newStage = new Stage();
@@ -545,6 +556,10 @@ public class LinearProgrammingControler {
 
     }
 
+    /**
+     * Method sets the labels and circles of basic solutions into the graph
+     * @param lines lines
+     */
     private void drawBasicSolutions(LinesArray lines) {
         ArrayList<Point> basicSolutions = lines.findBasicSolutions();
         for (Point i : basicSolutions){
@@ -588,12 +603,20 @@ public class LinearProgrammingControler {
 
     }
 
+    /**
+     * Method sets the coordinates into label behind the optimal solution
+     * @param solution point solution
+     */
     private void setSolutionLabel(Point solution){
         optimalSolutionPointLabel.setLayoutX(solution.getX() * zoom + 10 + 30);
         optimalSolutionPointLabel.setLayoutY(solution.getY() * (-zoom) -20 + 470);
         optimalSolutionPointLabel.setText(solution.toString());
     }
 
+    /**
+     * Method sets the coordinates into label behind the second basic optimal solution
+     * @param solution point solution
+     */
     private void setSolutionLabelSecond(Point solution){
         infiniteOptimalPointLabel.setLayoutX(solution.getX() * zoom + 10 + 30);
         infiniteOptimalPointLabel.setLayoutY(solution.getY() * (-zoom) -20 + 470);
@@ -663,9 +686,9 @@ public class LinearProgrammingControler {
     private Point findCentroid(ArrayList<Point> edges){
         double x = 0;
         double y = 0;
-        for (int i = 0; i < edges.size(); i++){
-            x += edges.get(i).getX();
-            y += edges.get(i).getY();
+        for (Point edge : edges) {
+            x += edge.getX();
+            y += edge.getY();
         }
         return new Point(x/edges.size(), y/edges.size());
     }
@@ -699,8 +722,7 @@ public class LinearProgrammingControler {
      * @param a Point a
      * @param b Point b
      * @param center Centroid
-     * @return true when they need to be switched
-     * @return false when they stay as they are
+     * @return true when they need to be switched & false when they stay as they are
      */
     private static boolean comparePoint(Point a, Point b, Point center) {
 
@@ -738,8 +760,8 @@ public class LinearProgrammingControler {
 
     /**
      * Method switches two elements in array
-     * @param position1
-     * @param position2
+     * @param position1 position
+     * @param position2 position
      * @param points array list of points
      * @return array list with switched points
      */
@@ -767,7 +789,7 @@ public class LinearProgrammingControler {
     /**
      * Method takes the possible solutions and finds the one with max x and max y
      * The higher number is the base for zoom recalculation
-     * @param lines
+     * @param lines lines
      */
     private void adjustZoom(LinesArray lines) {
         ArrayList<Point> possiblePoints = lines.findPossibleSolutions();
@@ -781,14 +803,13 @@ public class LinearProgrammingControler {
         }
         BigDecimal bd = new BigDecimal(zoomRound);
         bd = bd.round(new MathContext(1));
-        double zoomJustified = justifyZoom(bd.doubleValue());
-        zoom = zoomJustified;
+        zoom = justifyZoom(bd.doubleValue());
     }
 
     /**
      * Method takes the zoom number and tries to change it that it can set labels correctly
-     * @param doubleValue
-     * @return
+     * @param doubleValue value
+     * @return justified value
      */
     private double justifyZoom(double doubleValue) {
         double result = 20d;
@@ -817,28 +838,28 @@ public class LinearProgrammingControler {
     }
 
     /**
-     * @param possiblePoints
+     * @param possiblePoints possible points
      * @return value the has the maximum X
      */
     private double findMaxX(ArrayList<Point> possiblePoints) {
         double maxValue = 0;
-        for (int i = 0; i < possiblePoints.size(); i++){
-            if (possiblePoints.get(i).getX() > maxValue){
-                maxValue = possiblePoints.get(i).getX();
+        for (Point possiblePoint : possiblePoints) {
+            if (possiblePoint.getX() > maxValue) {
+                maxValue = possiblePoint.getX();
             }
         }
         return maxValue;
     }
 
     /**
-     * @param possiblePoints
+     * @param possiblePoints possible points
      * @return value of a maximum Y
      */
     private double findMaxY(ArrayList<Point> possiblePoints) {
         double maxValue = 0;
-        for (int i = 0; i < possiblePoints.size(); i++){
-            if (possiblePoints.get(i).getY() > maxValue){
-                maxValue = possiblePoints.get(i).getY();
+        for (Point possiblePoint : possiblePoints) {
+            if (possiblePoint.getY() > maxValue) {
+                maxValue = possiblePoint.getY();
             }
         }
         return maxValue;

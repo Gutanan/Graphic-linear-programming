@@ -1,5 +1,7 @@
 package com.example.bp;
 
+import java.util.Arrays;
+
 /**
  * Method is a representation of a Simplex method
  * It does the counting and checking result
@@ -8,24 +10,23 @@ public class SimplexMethod {
 
     private int rows, cols; // row and column
     private double[][] table; // simplex tableau
-    private boolean solutionIsUnbounded = false;
     private PURPOSE purpose;
     private PURPOSE actualPurpose;
     private boolean isTwoPhase;
     private ERROR resultError = ERROR.IS_OPTIMAL;
 
 
-    public static enum ERROR {
+    public  enum ERROR {
         NOT_OPTIMAL,
         IS_OPTIMAL,
         UNBOUNDED,
         OPTIMAL_INFINITE
-    };
+    }
 
-    public static enum PURPOSE {
+    public enum PURPOSE {
         MAX,
         MIN
-    };
+    }
 
     public ERROR getResultError(){
         return resultError;
@@ -33,10 +34,10 @@ public class SimplexMethod {
 
     /**
      * Simplex table constructor with setting the parameters
-     * @param numOfConstraints
-     * @param numOfUnknowns
-     * @param purpose
-     * @param isTwoPhase
+     * @param numOfConstraints number of constrains
+     * @param numOfUnknowns number of unknowns
+     * @param purpose purpose of the task (min or max)
+     * @param isTwoPhase info two phase
      */
     public SimplexMethod(int numOfConstraints, int numOfUnknowns, PURPOSE purpose, boolean isTwoPhase) {
         rows = numOfConstraints + 1; // row number + 1
@@ -89,7 +90,7 @@ public class SimplexMethod {
 
     /**
      * Method finds the position of max value double in vector
-     * @param vector
+     * @param vector values
      * @return int position
      */
     private int findPositionMax(double[] vector) {
@@ -106,7 +107,7 @@ public class SimplexMethod {
 
     /**
      * Method finds the position of min value double in vector
-     * @param vector
+     * @param vector values
      * @return int position
      */
     private int findPositionMin(double[] vector) {
@@ -123,15 +124,15 @@ public class SimplexMethod {
 
     /**
      * Method evaluates whether all values are zero or negative in vector
-     * @param vector
-     * @return true if are
-     * @return false if are not
+     * @param vector values
+     * @return true if are & false if are not
      */
     private boolean areAllNullNegative(double[] vector) {
         boolean outcome = false;
-        for (int i = 0; i < vector.length; i++) {
-            if (vector[i] < 0) {
+        for (double v : vector) {
+            if (v < 0) {
                 outcome = true;
+                break;
             }
         }
         return outcome;
@@ -139,15 +140,15 @@ public class SimplexMethod {
 
     /**
      * Method evaluates whether all values are zero or positive in vector
-     * @param vector
-     * @return true if are
-     * @return false if are not
+     * @param vector values
+     * @return true if are & false if are not
      */
     private boolean areAllNullPositive(double[] vector) {
         boolean outcome = false;
-        for (int i = 0; i < vector.length; i++) {
-            if (vector[i] > 0) {
+        for (double v : vector) {
+            if (v > 0) {
                 outcome = true;
+                break;
             }
         }
         return outcome;
@@ -209,7 +210,7 @@ public class SimplexMethod {
 
     /**
      * Method returns string of the Solution price from simplex table
-     * @return
+     * @return String with solution price
      */
     public String returnSolutionPrice(){
         if (resultError.equals(ERROR.UNBOUNDED)){
@@ -228,9 +229,7 @@ public class SimplexMethod {
         }
         String result = "x = (";
         String[] vector = new String[cols-1];
-        for (int i = 0; i < vector.length; i++){
-            vector[i] = "0,00";
-        }
+        Arrays.fill(vector, "0,00");
         for (int i = 0; i < table.length; i++){
             for (int j = 0; j < table[0].length-1; j++){
                 if (table[i][j] == 1d && colIsUnitVector(i,j)){
@@ -243,8 +242,9 @@ public class SimplexMethod {
         result += ")";
         boolean areInfinitySolutions = false;
         for (int i = 0; i < table[rows-1].length-1; i++){
-            if (table[rows-1][i] == 0 && !colIsUnitVectorFromZero(rows-1,i)){
+            if (table[rows - 1][i] == 0 && !colIsUnitVectorFromZero(rows - 1, i)) {
                 areInfinitySolutions = true;
+                break;
             }
         }
         if (areInfinitySolutions){
@@ -273,18 +273,18 @@ public class SimplexMethod {
 
     /**
      * Method checks whether is the elements (i,j) column an unit vector, while element i,j is not 1
-     * @param i
-     * @param j
-     * @return
+     * @param i coordinate x
+     * @param j coordinate y
+     * @return boolean which answers the question
      */
     private boolean colIsUnitVectorFromZero(int i, int j) {
         boolean isUnit = true;
         boolean oneOne = false;
-        for (int k = 0; k < table.length; k++){
-            if ((table[k][j] != 0d && table[k][j] != 1) || (table[k][j] == 1 && oneOne)){
+        for (double[] doubles : table) {
+            if ((doubles[j] != 0d && doubles[j] != 1) || (doubles[j] == 1 && oneOne)) {
                 isUnit = false;
             }
-            if (table[k][j] == 1){
+            if (doubles[j] == 1) {
                 oneOne = true;
             }
         }
@@ -298,8 +298,8 @@ public class SimplexMethod {
      */
     private String buildVector(String[] vector) {
         String outcome = "";
-        for (int i = 0; i < vector.length; i++){
-            outcome += vector[i] + "; ";
+        for (String s : vector) {
+            outcome += s + "; ";
         }
         return outcome;
     }
@@ -313,8 +313,9 @@ public class SimplexMethod {
     private boolean colIsUnitVector(int i, int j) {
         boolean isUnit = true;
         for (int k = 0; k < table.length; k++){
-            if (table[k][j] != 0d && k != i){
+            if (table[k][j] != 0d && k != i) {
                 isUnit = false;
+                break;
             }
         }
         return isUnit;
@@ -322,8 +323,8 @@ public class SimplexMethod {
 
     /**
      * Method calculates other rows in order to make unit vector on entering variable
-     * @param enteringVariable
-     * @param exitingVariable
+     * @param enteringVariable entering variable
+     * @param exitingVariable exiting variable
      */
     private void calculateOtherRows(int enteringVariable, int exitingVariable){
         for (int i = 0; i < rows; i++) {
@@ -338,8 +339,8 @@ public class SimplexMethod {
 
     /**
      * Method calculates the values of exiting variables and puts them in the vector
-     * @param valuesOfExitingVariable
-     * @param enteringVariable
+     * @param valuesOfExitingVariable values
+     * @param enteringVariable entering variable
      */
     private void setValuesOfExitingVariableVector(double[] valuesOfExitingVariable, int enteringVariable){
         for (int i = 0; i < valuesOfExitingVariable.length; i++) {
@@ -354,15 +355,15 @@ public class SimplexMethod {
 
     /**
      * Method evaluates whether the solution is unbounded from vector of values of exiting variable
-     * @param valuesOfExitingVariable
-     * @return true if is unbounded
-     * @return false if is not
+     * @param valuesOfExitingVariable values
+     * @return true if is unbounded & false if is not
      */
     private boolean isUnbounded(double[] valuesOfExitingVariable) {
         boolean unbounded = true;
-        for (int i = 0; i < valuesOfExitingVariable.length; i++){
-            if (valuesOfExitingVariable[i] < Double.MAX_VALUE){
+        for (double v : valuesOfExitingVariable) {
+            if (v < Double.MAX_VALUE) {
                 unbounded = false;
+                break;
             }
         }
         return unbounded;
@@ -370,14 +371,12 @@ public class SimplexMethod {
 
     /**
      * Method returns vector without last element in array
-     * @param vector
-     * @return
+     * @param vector values
+     * @return values without las element
      */
     private double[] avoidLastElement(double[] vector){
         double[] result = new double[vector.length-1];
-        for (int i = 0; i < result.length; i++){
-            result[i] = vector[i];
-        }
+        System.arraycopy(vector, 0, result, 0, result.length);
         return result;
     }
 
@@ -385,8 +384,8 @@ public class SimplexMethod {
      * In case of 2phase it generates after the 1st phase a table for 2nd phase
      * It avoids the auxiliary columns and row
      * It also prepares the parameters for 2nd phase
-     * @param numOfAdditional
-     * @param numberOfAuxiliary
+     * @param numOfAdditional num of additional variables
+     * @param numberOfAuxiliary num of auxiliary variables
      */
     public void generateNewTable(int numOfAdditional, int numberOfAuxiliary) {
         if (isTwoPhase) {
@@ -414,9 +413,9 @@ public class SimplexMethod {
     }
 
     /**
-     * Method returns the ERROR wheter is the current table optiomal or not
+     * Method returns the ERROR whether is the current table optimal or not
      * It works on LP basic rules covered in the thesis
-     * @return
+     * @return ERROR with info about the current solution
      */
     private ERROR checkSolution(){
         ERROR error = ERROR.NOT_OPTIMAL;
@@ -447,8 +446,7 @@ public class SimplexMethod {
                 }
             }
         }
-        Point result = new Point(vector[0],vector[1]);
-        return result;
+        return new Point(vector[0],vector[1]);
     }
 
 }

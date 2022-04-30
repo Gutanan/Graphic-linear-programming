@@ -1,12 +1,12 @@
 package com.example.bp;
 
 /**
- * Class represents the purpose line with its two coeficients (x1; x2) and purpose type (min; max)
+ * Class represents the purpose line with its two coefficients (x1; x2) and purpose type (min; max)
  */
 public class PurposeLine {
     private double coefX1; //multiplier of X1
     private double coefX2; //multiplier of X2
-    private PURPOSE purpose;
+    private final PURPOSE purpose;
 
     public PurposeLine(PURPOSE purpose, double coefX1, double coefX2) {
         this.coefX1 = coefX1;
@@ -17,10 +17,10 @@ public class PurposeLine {
     /**
      * Purpose can be MAX or MIN value
      */
-    public static enum PURPOSE{
+    public  enum PURPOSE{
         MAX,
         MIN
-    };
+    }
 
     public double getCoefX1() {
         return coefX1;

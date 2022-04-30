@@ -54,6 +54,7 @@ public class LinesArray {
                 double yj = basicSolutionsDuplicates.get(j).getY();
                 if (xi == xj && yi == yj) {
                     add = false;
+                    break;
                 }
             }
             if (add) {
@@ -73,30 +74,30 @@ public class LinesArray {
         ArrayList<Point> basicSolutions = findBasicSolutions();
         ArrayList<Point> possibleSolutions = new ArrayList<>();
         boolean isPossible;
-        for (int i = 0; i < basicSolutions.size(); i++) {
+        for (Point basicSolution : basicSolutions) {
             isPossible = true;
-            for (int j = 0; j < lines.size(); j++) {
-                double value = ((lines.get(j).getCoefX1() * basicSolutions.get(i).getX()) + (lines.get(j).getCoefX2() * basicSolutions.get(i).getY()));
-                value = round(value,6);
-                if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
-                    if (value > lines.get(j).getRightSide()) {
+            for (LinearLine line : lines) {
+                double value = ((line.getCoefX1() * basicSolution.getX()) + (line.getCoefX2() * basicSolution.getY()));
+                value = round(value, 6);
+                if (line.getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
+                    if (value > line.getRightSide()) {
                         isPossible = false;
                     }
                 }
-                if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
-                    if (value < lines.get(j).getRightSide()) {
+                if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
+                    if (value < line.getRightSide()) {
                         isPossible = false;
                     }
                 }
-                if (lines.get(j).getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
-                    if (value != lines.get(j).getRightSide()) {
+                if (line.getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
+                    if (value != line.getRightSide()) {
                         isPossible = false;
                     }
                 }
 
             }
             if (isPossible) {
-                possibleSolutions.add(basicSolutions.get(i));
+                possibleSolutions.add(basicSolution);
             }
         }
         return possibleSolutions;
@@ -191,9 +192,10 @@ public class LinesArray {
      */
     public double[][] createMatrix() {
         boolean isStandart = true;
-        for (int i = 0; i < lines.size(); i++) {
-            if (!lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
+        for (LinearLine line : lines) {
+            if (!line.getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
                 isStandart = false;
+                break;
             }
         }
         if (isStandart) {
@@ -238,8 +240,8 @@ public class LinesArray {
      */
     public int getNumOfAuxiliary(){
         int numOfAuxiliary = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.GREATER) || lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.EQUAL) ) {
+        for (LinearLine line : lines) {
+            if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER) || line.getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
                 numOfAuxiliary++;
             }
         }
@@ -252,8 +254,8 @@ public class LinesArray {
      */
     public int getNumOfAdditional(){
         int numOfAdditional = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.GREATER) || lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.LOWER) ) {
+        for (LinearLine line : lines) {
+            if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER) || line.getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
                 numOfAdditional++;
             }
         }
@@ -271,20 +273,20 @@ public class LinesArray {
         int numOfAuxiliary = getNumOfAuxiliary();
         int numOfGreaterThan = 0;
         int positionAuxiliary = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
+        for (LinearLine line : lines) {
+            if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
                 numOfGreaterThan++;
             }
         }
         int numOfEqual = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
+        for (LinearLine line : lines) {
+            if (line.getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
                 numOfEqual++;
             }
         }
         int numOfLowerThan = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
+        for (LinearLine line : lines) {
+            if (line.getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
                 numOfLowerThan++;
             }
         }
@@ -298,54 +300,54 @@ public class LinesArray {
         }
 
         int i = 0;
-        for (int k = 0; k < lines.size(); k++) {
-            if (!lines.get(k).getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
-                standartMatrix[i][0] = lines.get(k).getCoefX1();
-                standartMatrix[i][1] = lines.get(k).getCoefX2();
-                if (lines.get(k).getRestrain().equals(LinearLine.RESTRAIN.GREATER)){
-                    standartMatrix[rows - 1][0] += lines.get(k).getCoefX1();
-                    standartMatrix[rows - 1][1] += lines.get(k).getCoefX2();
+        for (LinearLine line : lines) {
+            if (!line.getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
+                standartMatrix[i][0] = line.getCoefX1();
+                standartMatrix[i][1] = line.getCoefX2();
+                if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
+                    standartMatrix[rows - 1][0] += line.getCoefX1();
+                    standartMatrix[rows - 1][1] += line.getCoefX2();
                 }
                 for (int j = 2; j < cols - 1; j++) {
                     if (i == j - 2) {
-                        if (lines.get(k).getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
+                        if (line.getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
                             standartMatrix[i][j] = 1;
-                        } else if (lines.get(k).getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
+                        } else if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
                             standartMatrix[i][j] = -1;
                             standartMatrix[rows - 1][j] += -1;
                         } else {
                             standartMatrix[i][j] = 0;
                         }
-                    } else if (lines.get(k).getRestrain().equals(LinearLine.RESTRAIN.GREATER) && (j == 2 + numOfAdditional + positionAuxiliary)){
+                    } else if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER) && (j == 2 + numOfAdditional + positionAuxiliary)) {
                         standartMatrix[i][j] = 1;
                     } else {
                         standartMatrix[i][j] = 0;
                     }
                 }
-                if (lines.get(k).getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
+                if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
                     positionAuxiliary++;
-                    standartMatrix[rows-1][cols - 1] += lines.get(k).getRightSide();
+                    standartMatrix[rows - 1][cols - 1] += line.getRightSide();
                 }
-                standartMatrix[i][cols - 1] = lines.get(k).getRightSide();
+                standartMatrix[i][cols - 1] = line.getRightSide();
                 i++;
             }
         }
 
-        for (int k = 0; k < lines.size(); k++) {
-            if (lines.get(k).getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
-                standartMatrix[i][0] = lines.get(k).getCoefX1();
-                standartMatrix[i][1] = lines.get(k).getCoefX2();
-                standartMatrix[rows - 1][0] += lines.get(k).getCoefX1();
-                standartMatrix[rows - 1][1] += lines.get(k).getCoefX2();
+        for (LinearLine line : lines) {
+            if (line.getRestrain().equals(LinearLine.RESTRAIN.EQUAL)) {
+                standartMatrix[i][0] = line.getCoefX1();
+                standartMatrix[i][1] = line.getCoefX2();
+                standartMatrix[rows - 1][0] += line.getCoefX1();
+                standartMatrix[rows - 1][1] += line.getCoefX2();
                 for (int j = 2; j < cols - 1; j++) {
-                    if (j == 2 + numOfAdditional + positionAuxiliary){
+                    if (j == 2 + numOfAdditional + positionAuxiliary) {
                         standartMatrix[i][j] = 1;
                     } else {
                         standartMatrix[i][j] = 0;
                     }
                 }
-                standartMatrix[i][cols - 1] = lines.get(k).getRightSide();
-                standartMatrix[rows-1][cols - 1] += lines.get(k).getRightSide();
+                standartMatrix[i][cols - 1] = line.getRightSide();
+                standartMatrix[rows - 1][cols - 1] += line.getRightSide();
                 positionAuxiliary++;
                 i++;
             }
@@ -356,7 +358,7 @@ public class LinesArray {
 
     /**
      * Prints the simplex table
-     * @param table
+     * @param table table
      */
     public void print(double[][] table) {
         for (int i = 0; i < lines.size() + 1; i++) {
@@ -377,9 +379,7 @@ public class LinesArray {
      * @return matrix for simplex method
      */
     public double[][] addPurposeVector(double[][] matrix, double[] vector) {
-        for (int k = 0; k < lines.size() + 3; k++) {
-            matrix[lines.size()][k] = vector[k];
-        }
+        if (lines.size() + 3 >= 0) System.arraycopy(vector, 0, matrix[lines.size()], 0, lines.size() + 3);
         //print(matrix);
         return matrix;
     }
@@ -401,18 +401,18 @@ public class LinesArray {
 
     /**
      * Method changes all restrains, that have their right side negative.
-     * It multiplies all number of the line by -1 and if necessary changes the restrain type
+     * It multiplies all number of the line by -1 and if necessary changes the restraint type
      */
     public void doRightPositive(){
-        for (int i = 0; i < lines.size(); i++){
-            if (lines.get(i).getRightSide() < 0){
-                lines.get(i).setRightSide(lines.get(i).getRightSide() * (-1));
-                lines.get(i).setCoefX1(lines.get(i).getCoefX1() * (-1));
-                lines.get(i).setCoefX2(lines.get(i).getCoefX2() * (-1));
-                if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.LOWER)){
-                    lines.get(i).setRestrain(LinearLine.RESTRAIN.GREATER);
-                } else if (lines.get(i).getRestrain().equals(LinearLine.RESTRAIN.GREATER)){
-                    lines.get(i).setRestrain(LinearLine.RESTRAIN.LOWER);
+        for (LinearLine line : lines) {
+            if (line.getRightSide() < 0) {
+                line.setRightSide(line.getRightSide() * (-1));
+                line.setCoefX1(line.getCoefX1() * (-1));
+                line.setCoefX2(line.getCoefX2() * (-1));
+                if (line.getRestrain().equals(LinearLine.RESTRAIN.LOWER)) {
+                    line.setRestrain(LinearLine.RESTRAIN.GREATER);
+                } else if (line.getRestrain().equals(LinearLine.RESTRAIN.GREATER)) {
+                    line.setRestrain(LinearLine.RESTRAIN.LOWER);
                 }
             }
         }
