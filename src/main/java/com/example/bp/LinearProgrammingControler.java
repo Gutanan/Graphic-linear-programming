@@ -1,6 +1,7 @@
 package com.example.bp;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -10,6 +11,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
@@ -271,16 +273,12 @@ public class LinearProgrammingControler {
      * Method is run by button "Nápověda" in menubar
      */
     @FXML
-    protected void showUserGuide(){
+    protected void showUserGuide() throws IOException {
         Stage newStage = new Stage();
-        VBox comp = new VBox();
-        Label guide = new Label("Tohle je okno s nápovědou");
-        Label author = new Label("petd11");
-        comp.getChildren().add(guide);
-        comp.getChildren().add(author);
-
-        Scene stageScene = new Scene(comp, 300, 600);
-        newStage.setScene(stageScene);
+        FXMLLoader fxmlLoader = new FXMLLoader(LinearProgrammingControler.class.getResource("help.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 700, 700);
+        newStage.setTitle("Linear Programming");
+        newStage.setScene(scene);
         newStage.show();
     }
 
