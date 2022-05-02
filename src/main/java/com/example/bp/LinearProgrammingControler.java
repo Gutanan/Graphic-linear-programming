@@ -514,7 +514,7 @@ public class LinearProgrammingControler {
                 line.setEndX(450d);
                 line.setEndY(y * (-zoom));
             } else {
-                double x = (((450d/zoom)*linearLine.getCoefX2())-linearLine.getRightSide())/linearLine.getCoefX1();
+                double x = (((450d/zoom)*linearLine.getCoefX2())-linearLine.getRightSide())/(-linearLine.getCoefX1());
                 line.setEndX(x * zoom);
                 line.setEndY(-450d);
             }
