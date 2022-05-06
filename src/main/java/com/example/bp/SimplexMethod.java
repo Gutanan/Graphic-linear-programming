@@ -79,7 +79,7 @@ public class SimplexMethod {
         tableau += "\t  b\n\t";
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                String value = String.format("%.2f", table[i][j]);
+                String value = String.format("  %.2f", table[i][j]);
                 tableau += (value + "\t");
             }
             tableau += "\n\t";

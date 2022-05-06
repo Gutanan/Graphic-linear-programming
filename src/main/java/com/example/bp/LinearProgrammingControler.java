@@ -115,7 +115,7 @@ public class LinearProgrammingControler {
             return;
         }
 
-        drawShapes(purpose,lines);
+        drawShapes(lines);
         //Simplex method
         lines.doRightPositive();
         int numOfAuxiliary = lines.getNumOfAuxiliary();
@@ -148,6 +148,7 @@ public class LinearProgrammingControler {
         output.appendText(simplex.printString());
         optimalLabel.setText(simplex.returnSolutionVector());
         purposePriceLabel.setText(simplex.returnSolutionPrice());
+        drawPurposeLine(purpose, this.purpLine, simplex.returnOptimalPoint());
 
         //parse optimal solution coordinates
         Point optimalSolPoint = simplex.returnOptimalPoint();
@@ -511,12 +512,22 @@ public class LinearProgrammingControler {
             line.setStartY(0d);
             double y = (((450d/zoom)*linearLine.getCoefX1())-linearLine.getRightSide())/(-linearLine.getCoefX2());
             if (y <= (450d/zoom)){
-                line.setEndX(450d);
-                line.setEndY(y * (-zoom));
+                if (y > 0){
+                    line.setEndX(450d);
+                    line.setEndY(y * (-zoom));
+                } else {
+                    line.setEndX(0d);
+                    line.setEndY(0d);
+                }
             } else {
                 double x = (((450d/zoom)*linearLine.getCoefX2())-linearLine.getRightSide())/(-linearLine.getCoefX1());
-                line.setEndX(x * zoom);
-                line.setEndY(-450d);
+                if (x > 0){
+                    line.setEndX(x * zoom);
+                    line.setEndY(-450d);
+                } else {
+                    line.setEndX(0d);
+                    line.setEndY(0d);
+                }
             }
         }
         if (linearLine.getNullX().getX() < 0 && linearLine.getNullY().getY() < 0){
@@ -772,15 +783,13 @@ public class LinearProgrammingControler {
 
     /**
      * Method draws shapes according to the results of counting into the graph
-     * @param purpose purposeLine
      * @param lines constrains
      */
-    private void drawShapes(PurposeLine purpose, LinesArray lines){
+    private void drawShapes(LinesArray lines){
         purpLine.setVisible(true);
         optimalCircle.setVisible(true);
         possibleSolutionsPolygon.setVisible(true);
 
-        drawPurposeLine(purpose, purpLine, lines.findOptimalSolution(purpose));
         drawPolygon(lines, possibleSolutionsPolygon);
     }
 
@@ -798,6 +807,9 @@ public class LinearProgrammingControler {
             zoomRound = 450/(maxX + maxX/10);
         } else {
             zoomRound = 450/(maxY + maxY/10);
+        }
+        if (zoomRound == Double.POSITIVE_INFINITY){
+            zoomRound = 20d;
         }
         BigDecimal bd = new BigDecimal(zoomRound);
         bd = bd.round(new MathContext(1));
